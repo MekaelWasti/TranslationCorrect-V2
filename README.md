@@ -1,3 +1,7 @@
+
+![POC Diagram](https://github.com/MekaelWasti/Error-in-Translations/assets/40731373/af13deda-d751-4ae0-ae01-ec90f71fb754)
+
+
 # Phase 1
 
 ## Input
