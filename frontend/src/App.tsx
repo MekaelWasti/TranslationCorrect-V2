@@ -1,34 +1,43 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
 import './App.css'
 
 function App() {
-  const [count, setCount] = useState(0)
-
   return (
-    <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+    <div className="landing-page-parent">
+      <div className="navbar">
+        <ul className="navbar-contents">
+          <li className="navbar-item"><a className="navbar-item-name" href="http://localhost:5173">Translation Error</a></li>
+        </ul>
       </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
+      <div className="input-and-button">
+        <div className="input-container">
+          <div className="wrapper">
+            <ul className="language-bar">
+              <li className="from-languages">
+                <select>
+                  <option value="en-US">English</option>
+                  <option value="hi-IN">Hindi</option>
+                  <option value="ne-NP">Nepali</option>
+                </select>
+              </li>
+              <li className="to-languages">
+                <select>
+                  <option value="en-US">English</option>
+                  <option value="hi-IN">Hindi</option>
+                  <option value="ne-NP">Nepali</option>
+                </select>
+              </li>
+            </ul>
+            <div className="text-input">
+              <textarea className="from-text" placeholder="Type to translate."></textarea>
+              <textarea className="to-text" placeholder="Translated text appears here." readOnly disabled></textarea>
+            </div>
+          </div>
+        </div>
+        <div className="translate-text-button">
+          <button>Translate Text</button>
+        </div>
       </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
+    </div>
   )
 }
 
