@@ -6,6 +6,11 @@
   font-family: "Inter", sans-serif;
 }
 
+/* * {
+  font-family: "Inter";
+  font-weight: 600;
+} */
+
 #root {
   max-width: 1280px;
   margin: 0 auto;
@@ -47,4 +52,27 @@
 
 .read-the-docs {
   color: #888;
+}
+
+/* Translation Input */
+
+nav {
+  display: flex;
+}
+
+nav > .logo {
+  width: 4vw;
+}
+
+.translation_input {
+  width: 40vw;
+  height: 50vh;
+  outline: none;
+  box-shadow: none;
+  text-align: center;
+}
+
+.translation_input:focus {
+  outline: none;
+  box-shadow: none;
 }
