@@ -5,7 +5,7 @@
 
   color-scheme: light dark;
   color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
+  background-color: #111111;
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -26,6 +26,8 @@ body {
   margin: 0;
   display: flex;
   place-items: center;
+  align-items: center;
+  justify-content: center;
   min-width: 320px;
   min-height: 100vh;
 }
@@ -35,22 +37,142 @@ h1 {
   line-height: 1.1;
 }
 
-button {
+.navbar {
+  position: fixed;
+  top: 0%;
+  left: 0%;
+  width: 100vw;
+}
+
+.navbar .navbar-contents {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  background-color: #000000;
+  height: 70px;
+}
+
+.navbar .navbar-contents .navbar-item {
+  float: left;
+  position: absolute;
+  left: 11.63%;
+  top: 20%;
+  padding-left: 0;
+}
+
+.navbar .navbar-contents .navbar-item .navbar-item-name {
+  color: #ffffff;
+  font-family: "Plus Jakarta Sans";
+  font-size: larger;
+  font-weight: 800;
+}
+
+.input-and-button {
+  position: absolute;
+  top: 13%;
+  left: 11.63%; /* Input container takes 76.74% of screen width, so there should be 11.63% on each side*/
+}
+
+.input-container {  /* We should enforce some minimum height for this; otherwise, too compressed on mobile*/
+  width: 76.74vw;  /* 76.74% of screen width */
+  height: 37.79vh;  /* 37.79% of screen height */
+  background: #1a1a1a;
+  border-radius: 8px;
+  outline: #333333 solid 1px;
+}
+
+.wrapper .text-input {
+  display: flex;
+  border-top: #333333 solid 1px;
+}
+
+.language-bar {
+  list-style: none;
+}
+
+.language-bar, li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-left: 1.2vw;
+  padding-top: 6.7px;
+  padding-bottom: 6.7px;
+}
+
+.language-bar .from-languages select {
+  border: none;
+  outline: none;
+  font-size: 16px;
+  background: none;
+  font-weight: 600;
+  cursor: pointer;
+  color: #2A6DF4;
+  /*position: absolute;
+  left: 3%;*/
+}
+
+.language-bar .to-languages select {
+  border: none;
+  outline: none;
+  font-size: 16px;
+  background: none;
+  font-weight: 600;
+  cursor: pointer;
+  color: #2A6DF4;
+  position: absolute;
+  left: 53%;
+  padding: 0.5rem 1.25rem;
+}
+
+.language-bar .from-languages select:hover {
+  background: rgba(00, 122, 255, 0.35);
+  border-radius: 30px;
+}
+
+.language-bar .to-languages select:hover {
+  background: rgba(00, 122, 255, 0.35);
+  border-radius: 30px;
+}
+
+.text-input textarea {
+  height: 31.35vh;
+  width: 50%;
+  border: none;
+  outline: none;
+  background: none;
+  font-size: 22px;
+  padding-left: 23px;
+  padding-right: 23px;
+  padding-top: 29px;
+  padding-bottom: 29px;
+  resize: none;
+}
+
+.text-input .to-text {
+  border-left: #333333 1px solid;
+}
+
+.translate-text-button button {
+  width: 76.74vw;
   border-radius: 8px;
   border: 1px solid transparent;
-  padding: 0.6em 1.2em;
-  font-size: 1em;
-  font-weight: 500;
+  padding: 14px;
+  margin-top: 14.5px;
+  font-size: 17.5px;
+  font-weight: 600;
   font-family: inherit;
-  background-color: #1a1a1a;
+  background-color: #2A6DF4;
   cursor: pointer;
   transition: border-color 0.25s;
 }
-button:hover {
+
+.translate-text-button button:hover {
   border-color: #646cff;
 }
-button:focus,
-button:focus-visible {
+
+.translate-text-button button:focus,
+.translate-text-button button:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;
 }
 
@@ -62,7 +184,7 @@ button:focus-visible {
   a:hover {
     color: #747bff;
   }
-  button {
+  .translate-text-button button {
     background-color: #f9f9f9;
   }
 }
