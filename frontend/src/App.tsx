@@ -5,29 +5,54 @@ import './App.css'
 
 function App() {
   const [count, setCount] = useState(0)
+  const [translation, setTranslation] = useState('')
+
+  // Functions
+
+  const handleSubmission = (e) => {
+    if (e.key === 'Enter') {
+      const userInput = e.target.value;
+      console.log("User Input: ", userInput);
+      sendTranslation(userInput);
+    }
+  }
+
+  const sendTranslation = async (userInput:string) => {
+
+    try {
+      const response = await fetch('http://127.0.0.1:63030/submit_translation/', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ value: userInput }),
+  
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const data = await response.json();
+      console.log("Recieved: ", data);
+      console.log("Response: ", data.response);
+      setTranslation(data.response);
+    } catch (error) {
+      console.error('Error:', error);
+    }
+
+  }
 
   return (
     <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
+    <div className="main_container">
+      <nav>
+        <img className='logo' src="favicon.svg" alt="" />
+        <h1>Errors in Translation</h1>
+      </nav>
+      <input onKeyDown={handleSubmission} className='translation_input' placeholder='Please Enter Your Input Sentence' type="text" />
+      <p>{translation}</p>
+    </div>
     </>
   )
 }

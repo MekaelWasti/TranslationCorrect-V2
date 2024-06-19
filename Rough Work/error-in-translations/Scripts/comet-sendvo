@@ -1,0 +1,79 @@
+#!C:\Users\mekae\Desktop\CS\ML-DL\Projects\Lee Lab\Error-in-Translations\error-in-translations\Scripts\python.exe
+
+# Comet VOEvent Broker.
+# Event sender.
+
+# Python standard library
+import sys
+
+# Twisted
+from twisted.python.log import startLogging
+from twisted.python import usage
+from twisted.internet import reactor
+
+# VOEvent transport protocol
+from comet.protocol import VOEventSenderFactory
+
+# Encapsulation of event
+from comet.utility import xml_document
+import lxml.etree as ElementTree
+
+import comet.log as log
+
+class Options(usage.Options):
+    optParameters = [
+        ["host", "h", "localhost", "Host to send to."],
+        ["port", "p", 8098, "Port to send to.", int],
+        ["file", "f", "-", "Where to read XML text to send (- is stdin)."]
+    ]
+
+class OneShotSender(VOEventSenderFactory):
+    """
+    A factory that shuts down the reactor when we lose the connection to the
+    remote host. That either means that our event has been sent or that we
+    failed.
+    """
+    def clientConnectionLost(self, connector, reason):
+        reactor.stop()
+
+    def clientConnectionFailed(self, connector, reason):
+        log.warn("Connection failed")
+        reactor.stop()
+
+if __name__ == "__main__":
+    config = Options()
+    config.parseOptions()
+
+    startLogging(sys.stdout)
+
+    # We handle the input data in binary mode, as we don't want to change the
+    # encoding that has already been applied to the event text.
+    if config["file"] == "-":
+        if hasattr(sys.stdin, "buffer"):
+            f = sys.stdin.buffer  # Python 3
+        else:
+            f = sys.stdin         # Python 2
+    else:
+        f = open(config["file"], 'r+b')
+
+    try:
+        factory = OneShotSender(xml_document(f.read()))
+    except IOError:
+        log.warn("Reading XML document failed")
+        reactor.callWhenRunning(reactor.stop)
+    except ElementTree.Error:
+        log.warn("Could not parse event text")
+        reactor.callWhenRunning(reactor.stop)
+    else:
+        reactor.connectTCP(config['host'], config['port'], factory)
+    finally:
+        f.close()
+
+    reactor.run()
+
+    # If our factory didn't get an acknowledgement of receipt, we'll exit with
+    # status 1.
+    if "factory" in locals() and factory.ack:
+        sys.exit(0)
+    else:
+        sys.exit(1)
