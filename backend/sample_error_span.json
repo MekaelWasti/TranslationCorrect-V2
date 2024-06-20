@@ -1,0 +1,34 @@
+{
+    "errors": [
+      {
+        "original_text": "Учените",
+        "translated_text": "Students",
+        "correct_text": "Scientists",
+        "start_index_orig": 0,
+        "end_index_orig": 7,
+        "start_index_translation": 0,
+        "end_index_translation": 7,
+        "error_type": "Incorrect Subject"
+      },
+      {
+        "original_text": "който може да сортира клетките по тип: малък печатен чип",
+        "translated_text": "",
+        "correct_text": "that can sort cells by type: small printed chip",
+        "start_index_orig": 75,
+        "end_index_orig": 131,
+        "start_index_translation": 86,
+        "end_index_translation": 108,
+        "error_type": "Omission"
+      },
+      {
+        "original_text": "изобретяването на нов диагностичен инструмент",
+        "translated_text": "the invention of a new diagnostic tool that can sort cells by a type of small printed",
+        "correct_text": "the invention of a new diagnostic tool",
+        "start_index_orig": 43,
+        "end_index_orig": 75,
+        "start_index_translation": 51,
+        "end_index_translation": 108,
+        "error_type": "Incomplete Sentence"
+      }
+    ]
+  }

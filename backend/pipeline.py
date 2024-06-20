@@ -1,4 +1,5 @@
 from transformers import AutoModelForSeq2SeqLM, AutoTokenizer
+import json
 
 # Load model and tokenizer
 model_name = "facebook/nllb-200-distilled-600M"
@@ -22,3 +23,9 @@ def translate(source_text, source_lang, target_lang):
     translated_text = tokenizer.batch_decode(translated_tokens, skip_special_tokens=True)[0]
 
     return translated_text
+
+def error_span():
+    with open('sample_error_span.json', encoding='utf-8') as f:
+        data = json.load(f)
+
+    return data

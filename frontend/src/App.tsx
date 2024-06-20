@@ -74,6 +74,7 @@ function App() {
               </li>
               <li className="to-languages">
                 <select>
+                  <option value="zh-TW">Chinese (Traditional)</option>
                   <option value="en-US">English</option>
                   <option value="hi-IN">Hindi</option>
                   <option value="ne-NP">Nepali</option>
@@ -96,14 +97,25 @@ function App() {
         <div className="translate-text-button">
           <button onClick={handleSubmission}>Translate Text</button>
         </div>
-              {/* <img className='loading-icon ' src={isLoading ? loadingIconWhite : loadingIconGrey} alt="" /> */}
-              {/* <div class="glow-text"> */}
-                {/* Analyzing */}
-              {/* </div> */}
-              
-
-
       </div>
+        
+        <div className="error-highlighting-section">
+        <hr className="divider" />
+          <div className="source-text-highlighting">  
+          <h2 className='source-text-title'>Original Text</h2>
+          <p>Kuwa mbere, abahanga ba siyansi bo mu Ishuri rikuru ry’ubuvuzi rya kaminuza ya Stanford bataganje ko havumbuwe igikoresho gishya cyo gusuzuma gishobora gutandukanya ingirabuzima</p>
+          </div>
+          
+          <hr className="divider" />
+          
+          <div className="target-text-highlighting">  
+          <h2 className='target-text-title'>Translated Text</h2>
+          <p>Students from Stanford University Medical School announced Monday the invention of a new diagnostic tool that can sort cells by type of small printed chip</p>
+          </div>
+        </div>
+
+          <hr className="divider" />
+
     </div>
 
   )
