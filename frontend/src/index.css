@@ -53,19 +53,36 @@ h1 {
   height: 70px;
 }
 
-.navbar .navbar-contents .navbar-item {
+/* .navbar .navbar-contents .navbar-item {
   float: left;
   position: absolute;
   left: 11.63%;
   top: 20%;
   padding-left: 0;
+  padding-top: 0;
+} */
+
+.navbar-item {
+  display: flex;
+  align-items: center;
+  justify-content: start;
+  margin-left: 10vw;
+}
+
+.logo {
+  width: 4vw;
+  height: auto;
+  padding: 0 0 0 0;
+  margin: 0 0 0 0;
 }
 
 .navbar .navbar-contents .navbar-item .navbar-item-name {
   color: #ffffff;
   font-family: "Plus Jakarta Sans";
-  font-size: larger;
+  /* font-size: larger; */
+  font-size: 1.5rem;
   font-weight: 800;
+  padding-left: 1.5vw;
 }
 
 .input-and-button {
@@ -74,9 +91,10 @@ h1 {
   left: 11.63%; /* Input container takes 76.74% of screen width, so there should be 11.63% on each side*/
 }
 
-.input-container {  /* We should enforce some minimum height for this; otherwise, too compressed on mobile*/
-  width: 76.74vw;  /* 76.74% of screen width */
-  height: 37.79vh;  /* 37.79% of screen height */
+.input-container {
+  /* We should enforce some minimum height for this; otherwise, too compressed on mobile*/
+  width: 76.74vw; /* 76.74% of screen width */
+  height: 37.79vh; /* 37.79% of screen height */
   background: #1a1a1a;
   border-radius: 8px;
   outline: #333333 solid 1px;
@@ -91,7 +109,8 @@ h1 {
   list-style: none;
 }
 
-.language-bar, li {
+.language-bar,
+li {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -107,7 +126,7 @@ h1 {
   background: none;
   font-weight: 600;
   cursor: pointer;
-  color: #2A6DF4;
+  color: #2a6df4;
   /*position: absolute;
   left: 3%;*/
 }
@@ -119,7 +138,7 @@ h1 {
   background: none;
   font-weight: 600;
   cursor: pointer;
-  color: #2A6DF4;
+  color: #2a6df4;
   position: absolute;
   left: 53%;
   padding: 0.5rem 1.25rem;
@@ -162,7 +181,7 @@ h1 {
   font-size: 17.5px;
   font-weight: 600;
   font-family: inherit;
-  background-color: #2A6DF4;
+  background-color: #2a6df4;
   cursor: pointer;
   transition: border-color 0.25s;
 }
@@ -187,4 +206,36 @@ h1 {
   .translate-text-button button {
     background-color: #f9f9f9;
   }
+}
+
+@keyframes glow {
+  0%,
+  50% {
+    filter: drop-shadow(0px 0px 0px rgba(255, 255, 255, 0.4));
+  }
+  100% {
+    filter: drop-shadow(0px 0px 10px rgba(255, 255, 255, 1));
+  }
+}
+
+.to-text-container {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.to-text {
+  width: 100%;
+}
+
+/* Loading Icon */
+.loading-icon {
+  width: 10vw; /* Set your desired width */
+  /* filter: drop-shadow(0px 0px 20px rgba(255, 255, 255, 0.4)); */
+  animation: glow 3.5s infinite reverse;
+}
+
+.loading-icon-hidden {
+  display: none;
 }
