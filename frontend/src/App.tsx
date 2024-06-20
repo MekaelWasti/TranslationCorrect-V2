@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import loadingIconGrey from './assets/loading_icon_grey.svg'
+// import loadingIconGrey from './assets/loading_icon_grey.svg'
 import loadingIconWhite from './assets/loading_icon_white.svg'
 import './App.css'
 
