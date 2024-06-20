@@ -1,3 +1,128 @@
+# Run Instructions
+
+### PIP & Packages
+
+make your own env in the root folder of our repo with 
+
+```jsx
+pip install virtualenv
+```
+
+```
+python -m venv {name your env}
+```
+
+e.g.
+
+```
+python -m venv myenv
+```
+
+This will create your environment folder. Do not push this folder when you are pushing to the repo, it will probably cause problems if you even try because massive file sizes. Either manually stage changes when pushing and do not push this folder, or put it in the gitignore
+
+Then you can do 
+
+```jsx
+{the name of your env}\Scripts\activate
+```
+
+e.g.
+```
+myenv\Scripts\activate
+```
+
+now do
+
+```jsx
+pip install -r requirements.txt
+```
+
+It should install without collisions, if it doesn’t then fix it, ask me if you need to
+
+### To run Backend
+
+```jsx
+cd .\backend\
+```
+```
+uvicorn main:app --reload --host 0.0.0.0 --port 63030
+```
+
+Should get this
+```
+INFO:     Will watch for changes in these directories: ['C:\\Users\\mekae\\Desktop\\CS\\ML-DL\\Projects\\Lee Lab\\Error-in-Translations\\backend']
+INFO:     Uvicorn running on http://0.0.0.0:63030 (Press CTRL+C to quit)
+INFO:     Started reloader process [68584] using WatchFiles
+INFO:     Started server process [63380]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  WatchFiles detected changes in 'main.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [63380]
+INFO:     Started server process [51168]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+```
+### Frontend
+
+You’re going to need react, which needs node so install that and make it work
+
+Make a new terminal and then
+
+```jsx
+cd .\frontend\
+```
+
+Should be able to find versions using ```node -v``` and ```npm -v```
+```
+PS C:\Users\mekae\Desktop\CS\ML-DL\Projects\Lee Lab\Error-in-Translations\frontend> node -v
+v20.13.1 
+PS C:\Users\mekae\Desktop\CS\ML-DL\Projects\Lee Lab\Error-in-Translations\frontend> npm -v       
+10.8.0
+```
+
+Then I you should be able to 
+
+```jsx
+npm install
+```
+
+and then to run it 
+
+```jsx
+npm run dev
+```
+
+```
+  VITE v5.2.13  ready in 244 ms
+
+  ➜  Local:   http://localhost:5173/
+  ➜  Network: use --host to expose
+  ➜  press h + enter to show help
+```
+
+ctrl+click on the localhost link to open it up in the browser
+
+Translate should work on your typed input, if not, check the console log in the browser for hints of what went wrong
+
+
+
+
+
+
+
+
+
+
+
+
+
+---
+
+
+
 
 ![POC Diagram](https://github.com/MekaelWasti/Error-in-Translations/assets/40731373/af13deda-d751-4ae0-ae01-ec90f71fb754)
 
