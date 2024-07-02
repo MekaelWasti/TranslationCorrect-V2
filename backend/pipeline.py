@@ -24,6 +24,39 @@ def translate(source_text, source_lang, target_lang):
 
     return translated_text
 
+
+
+def errorSpanHighlighter(translation, spans):
+    final = translation
+
+    zIndex = 0
+    offset = 0
+
+    color_mappings = {
+        "Incorrect Subject": "#00A0F0",
+        "Omission": "#59c00aba",
+        "Incomplete Sentence": "#D3365A",
+    }
+    for error in spans["errors"]:
+        # init
+        start = error["start_index_translation"]
+        end = error["end_index_translation"]
+        color = color_mappings[error["error_type"]]
+
+        # tags
+        Ltag = "<span class='highlight' style='background-color: " + color + "; padding: " + str(zIndex) + "vh 0vw " + str(zIndex) + "vh 0vw; zIndex: " + str(zIndex) + "'>"
+        Rtag = "</span>"
+        
+        # Algo
+        # Must go left to right if we use this ordering of offset
+        final = final[:start + offset] + Ltag + final[start + offset:end + offset] + Rtag + final[end + offset:]
+        offset += len(Ltag) + len(Rtag)
+        zIndex += 1
+
+    return "<span>" + final + "</span>"
+
+
+
 def error_span():
     with open('sample_error_span.json', encoding='utf-8') as f:
         data = json.load(f)

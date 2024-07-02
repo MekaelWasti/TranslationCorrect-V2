@@ -269,9 +269,164 @@ li {
   text-align: left;
   /* margin: 0 0 0 12vh; */
   width: 76.74vw;
+  line-height: 5vh;
 }
 
 .source-text-title,
 .target-text-title {
   margin: 0 0 2vh 0;
+}
+
+.highlight {
+  line-height: 7vh;
+  /* background-color: red; */
+  /* position: absolute; */
+  border-radius: 5px;
+  /* top: 0; */
+  /* left: 0; */
+  /* padding: 1vh 1vw 1vh 1vw; */
+  /* mix-blend-mode: lighten; */
+  /* display: inline; */
+  /* background-color: #2a6df4; */
+}
+
+.txt {
+  display: flex;
+  position: relative;
+  padding: 1vh 1vw 1vh 1vw;
+  width: 100%;
+  height: 100%;
+}
+
+.error-tooltip-container {
+  display: none;
+  position: absolute;
+  z-index: 10;
+  /* display: flex; */
+  background-color: #222222;
+  padding: 1vh 1vw 1vh 1vw;
+  border-radius: 8px;
+  width: fit-content;
+  outline: #333333 solid 1px;
+}
+
+.error-tooltip:hover {
+  /* display: block; */
+}
+
+.error-tooltip {
+  padding: 0.5vh 3vw 1vh 3vw;
+}
+
+.error-tooltip > h3 {
+  display: inline;
+}
+
+.error-tooltip > p {
+  padding: 0vh 0vw 0vh 0vw;
+  margin: 0vh 0vw 0vh 0vw;
+}
+
+/* Error Legend Section */
+
+.error-legend-section {
+  display: flex;
+  /* width: fit-content; */
+}
+
+.error-legend-section > p {
+  /* width: fit-content; */
+}
+
+.color-label {
+  width: 4.5vw;
+  height: 4.5vw;
+  border-radius: 50%;
+}
+
+/* Edit Context */
+
+.edit-context-section {
+  text-align: left;
+  /* margin: 0 0 0 12vh; */
+  width: 76.74vw;
+  line-height: 5vh;
+}
+
+.suggestion-section {
+  background-color: #1a1a1a;
+  padding: 0.5vh 3vw 0.5vh 3vw;
+  border-radius: 8px;
+  outline: #333333 solid 1px;
+}
+
+/* Rephrase Section */
+
+.rephrase-section {
+  text-align: left;
+  /* margin: 0 0 0 12vh; */
+  width: 76.74vw;
+  line-height: 5vh;
+}
+
+.rephrase-section > button {
+  margin: 2vh 2vw 1vh 2vw;
+  padding: 1vh 3vw 1vh 3vw;
+  border-radius: 30px;
+  background-color: #222222;
+  border: none;
+  color: white;
+  font-size: 1rem;
+  font-weight: 450;
+  cursor: pointer;
+}
+
+.rephrase-section > button:hover {
+  background-color: #1b1b1b;
+}
+
+.rephrase-section > button:active {
+  background-color: #191919;
+}
+
+/* Accept Translation Section */
+
+.accept-translation-section {
+  text-align: left;
+  /* margin: 0 0 0 12vh; */
+  width: 76.74vw;
+  line-height: 5vh;
+}
+
+.accept-translation-section > button {
+  padding: 1vh 3vw 1vh 3vw;
+  width: 100%;
+  border-radius: 8px;
+  background-color: #2a6df4;
+  border: none;
+  color: white;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.accept-translation-section > button:hover {
+  background-color: #2460d7;
+}
+
+.accept-translation-section > button:active {
+  background-color: #1d4dae;
+}
+
+/* Send Feedback Section */
+.send-feedback {
+  margin: 2vh 0 0vh 0;
+}
+
+.send-feedback > a {
+  /* color: white; */
+  font-weight: 500;
+  font-size: small;
+  font-style: italic;
+  text-decoration: underline;
 }
