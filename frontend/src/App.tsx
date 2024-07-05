@@ -199,6 +199,23 @@ const App: React.FC = () => {
         <div className="source-text-highlighting">
           <h2 className="source-text-title">Original Text</h2>
           <p ref={sourceTextRef}>{sourceTextInput}</p>
+          {translationSubmitted && (
+            <>
+            <div className="error-legend-section">
+              <ul>
+                {errorLegend.map((legend, index) => (
+                  <li key={index}>
+                    <div
+                      className="color-label"
+                      style={{ backgroundColor: legend.color }}
+                    ></div>
+                    <p>{legend.error_type}</p>
+                  </li>
+                ))}
+              </ul>
+            </div>
+            </> 
+          )}
         </div>
 
         <hr className="divider" />
@@ -222,7 +239,7 @@ const App: React.FC = () => {
         
         {translationSubmitted && (
           <>
-            <hr className="divider" />
+            {/*<hr className="divider" />*/}
             <div className="error-legend-section">
               <ul>
                 {errorLegend.map((legend, index) => (
