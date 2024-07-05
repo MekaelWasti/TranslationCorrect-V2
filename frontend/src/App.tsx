@@ -47,6 +47,8 @@ const App: React.FC = () => {
     display: "none",
   });
 
+  const [translationSubmitted, setTranslationSubmitted] = useState(false); // Track if translation has been submitted
+
   const errorColors: { [key: string]: string } = {
     "Incorrect Subject": "#113c6a",
     "Omission": "#2CF551",
@@ -97,6 +99,7 @@ const App: React.FC = () => {
       }));
 
       setErrorLegend(legendItems);
+      setTranslationSubmitted(true); // Set translation submitted flag to true
     } catch (error) {
       console.error("Error:", error);
       setIsLoading(false);
@@ -191,7 +194,6 @@ const App: React.FC = () => {
       </div>
 
       {/* Error Highlighting Section */}
-
       <div className="error-highlighting-section">
         <hr className="divider" />
         <div className="source-text-highlighting">
@@ -217,21 +219,25 @@ const App: React.FC = () => {
             <p>Additional Details... TBD</p>
           </div>
         </div>
-
-        <hr className="divider" />
-        <div className="error-legend-section">
-          <ul>
-            {errorLegend.map((legend, index) => (
-              <li key={index}>
-                <div
-                  className="color-label"
-                  style={{ backgroundColor: legend.color }}
-                ></div>
-                <p>{legend.error_type}</p>
-              </li>
-            ))}
-          </ul>
-        </div>
+        
+        {translationSubmitted && (
+          <>
+            <hr className="divider" />
+            <div className="error-legend-section">
+              <ul>
+                {errorLegend.map((legend, index) => (
+                  <li key={index}>
+                    <div
+                      className="color-label"
+                      style={{ backgroundColor: legend.color }}
+                    ></div>
+                    <p>{legend.error_type}</p>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </> 
+        )}
         <hr className="divider" />
       </div>
 
