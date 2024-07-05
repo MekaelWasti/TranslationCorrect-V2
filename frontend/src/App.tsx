@@ -6,6 +6,26 @@ import DOMPurify from "dompurify";
 import "./App.css";
 import "./index.css";
 
+interface ApiResponse {
+  received_string: string;
+  response: string;
+  spans: {
+    errors: ErrorType[];
+  };
+  highlights: string;
+}
+
+interface ErrorType {
+  original_text: string;
+  translated_text: string;
+  correct_text: string;
+  start_index_orig: number;
+  end_index_orig: number;
+  start_index_translation: number;
+  end_index_translation: number;
+  error_type: string;
+}
+
 const App: React.FC = () => {
   const sourceTextRef = useRef(null);
   const translationTextRef = useRef<HTMLDivElement | null>(null);
@@ -19,12 +39,19 @@ const App: React.FC = () => {
   );
   const [translation, setTranslation] = useState("");
   const [error_type, setErrorType] = useState("Incorrect Subject");
+  const [errorLegend, setErrorLegend] = useState<{ error_type: string, color: string }[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [popupStyle, setPopupStyle] = useState({
     top: 0,
     left: 0,
     display: "none",
   });
+
+  const errorColors: { [key: string]: string } = {
+    "Incorrect Subject": "#113c6a",
+    "Omission": "#2CF551",
+    "Incomplete Sentence": "#A5304C",
+  };
 
   const handleInputBoxChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const userInput = e.currentTarget.value;
@@ -55,13 +82,21 @@ const App: React.FC = () => {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
 
-      const data = await response.json();
+      const data: ApiResponse = await response.json();
       setIsLoading(false);
       setTranslation(data.response);
 
       console.log(data.highlights);
       const sanitized = DOMPurify.sanitize(data.highlights);
       setSanitizedHtmlString(sanitized);
+
+      const uniqueErrors = Array.from(new Set(data.spans.errors.map((error: ErrorType) => error.error_type)));
+      const legendItems = uniqueErrors.map((error_type: string) => ({
+        error_type,
+        color: errorColors[error_type] || "#FFFFFF",
+      }));
+
+      setErrorLegend(legendItems);
     } catch (error) {
       console.error("Error:", error);
       setIsLoading(false);
@@ -186,27 +221,15 @@ const App: React.FC = () => {
         <hr className="divider" />
         <div className="error-legend-section">
           <ul>
-            <li>
-              <div
-                className="color-label"
-                style={{ backgroundColor: "#113c6a" }}
-              ></div>
-              <p>Incomplete Subject</p>
-            </li>
-            <li>
-              <div
-                className="color-label"
-                style={{ backgroundColor: "#2CF551" }}
-              ></div>
-              <p>Omission</p>
-            </li>
-            <li>
-              <div
-                className="color-label"
-                style={{ backgroundColor: "#A5304C" }}
-              ></div>
-              <p>Incomplete Sentence</p>
-            </li>
+            {errorLegend.map((legend, index) => (
+              <li key={index}>
+                <div
+                  className="color-label"
+                  style={{ backgroundColor: legend.color }}
+                ></div>
+                <p>{legend.error_type}</p>
+              </li>
+            ))}
           </ul>
         </div>
         <hr className="divider" />
