@@ -41,7 +41,7 @@ const App: React.FC = () => {
   const sendTranslation = async (userInput: string) => {
     try {
       const response = await fetch(
-        "http://127.0.0.1:63030/submit_translation/",
+        "http://127.0.0.1:63030/submit_translation",
         {
           method: "POST",
           headers: {
