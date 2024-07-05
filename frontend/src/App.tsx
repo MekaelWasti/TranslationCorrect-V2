@@ -186,21 +186,27 @@ const App: React.FC = () => {
         <hr className="divider" />
         <div className="error-legend-section">
           <ul>
-            <div
-              className="color-label"
-              style={{ backgroundColor: "#113c6a" }}
-            ></div>
-            <p>Incomplete Subject</p>
-            <div
-              className="color-label"
-              style={{ backgroundColor: "#2CF551" }}
-            ></div>
-            <p>Omission</p>
-            <div
-              className="color-label"
-              style={{ backgroundColor: "#A5304C" }}
-            ></div>
-            <p>Incomplete Sentence</p>
+            <li>
+              <div
+                className="color-label"
+                style={{ backgroundColor: "#113c6a" }}
+              ></div>
+              <p>Incomplete Subject</p>
+            </li>
+            <li>
+              <div
+                className="color-label"
+                style={{ backgroundColor: "#2CF551" }}
+              ></div>
+              <p>Omission</p>
+            </li>
+            <li>
+              <div
+                className="color-label"
+                style={{ backgroundColor: "#A5304C" }}
+              ></div>
+              <p>Incomplete Sentence</p>
+            </li>
           </ul>
         </div>
         <hr className="divider" />
