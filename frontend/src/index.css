@@ -272,12 +272,20 @@ li {
   line-height: 5vh;
 }
 
+.highlight-container {
+  margin-top: 2vh;
+  margin-bottom: 2vh;
+  width: 100%;
+  padding: 0 10vw; /* Optional: Adjust padding as needed */
+}
+
 .source-text-title,
 .target-text-title {
   margin: 0 0 2vh 0;
 }
 
 .highlight {
+  color: #ffffff;
   line-height: 7vh;
   /* background-color: red; */
   /* position: absolute; */

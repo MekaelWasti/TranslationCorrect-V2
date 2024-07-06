@@ -33,6 +33,7 @@ const App: React.FC = () => {
   const [sanitizedHtmlString, setSanitizedHtmlString] = useState(
     "<span><span class='highlight' style='background-color: #00A0F0; padding: 0vh 0vw 0vh 0vw; zIndex: 0'>Student</span>s from Stanford University Medical School an<span class='highlight' style='background-color: #D3365A; padding: 1vh 0vw 1vh 0vw; zIndex: 1'>nounced Monday the invention of a new diag<span class='highlight' style='background-color: #59c00aba; padding: 2vh 0vw 2vh 0vw; zIndex: 2'>nostic tool tha</span></span>t can sort cells by type of small printed chip</span>"
   );
+  //Students from Stanford University Medical School announced Monday the invention of a new diagnostic tool that can sort cells by type of small printed chip
 
   const [sourceTextInput, setSourceTextInput] = useState(
     "Kuwa mbere, abahanga ba siyansi bo mu Ishuri rikuru ry’ubuvuzi rya kaminuza ya Stanford bataganje ko havumbuwe igikoresho gishya cyo gusuzuma gishobora gutandukanya ingirabuzima"
@@ -40,6 +41,8 @@ const App: React.FC = () => {
   const [translation, setTranslation] = useState("");
   const [error_type, setErrorType] = useState("Incorrect Subject");
   const [errorLegend, setErrorLegend] = useState<{ error_type: string, color: string }[]>([]);
+  //const [highlightSpans, setHighlightSpans] = useState<{ start: number, end: number, color: string }[]>([]);
+  const [textParts, setTextParts] = useState<{ text: string, highlighted: boolean, color: string }[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [popupStyle, setPopupStyle] = useState({
     top: 0,
@@ -67,6 +70,13 @@ const App: React.FC = () => {
     setIsLoading(true);
   };
 
+  /**
+   * If we need to update /submit_translation's response, please also update interface ApiResponse,
+   * interface ErrorType, sendTranslation, and errorColors map (if applicable) as a part of
+   * your task; otherwise the error legend will not work.
+   * 
+   * @param userInput 
+   */
   const sendTranslation = async (userInput: string) => {
     try {
       const response = await fetch(
@@ -86,7 +96,8 @@ const App: React.FC = () => {
 
       const data: ApiResponse = await response.json();
       setIsLoading(false);
-      setTranslation(data.response);
+      //setTranslation(data.response);
+      setTranslation(data.received_string);
 
       console.log(data.highlights);
       const sanitized = DOMPurify.sanitize(data.highlights);
@@ -97,8 +108,42 @@ const App: React.FC = () => {
         error_type,
         color: errorColors[error_type] || "#FFFFFF",
       }));
-
       setErrorLegend(legendItems);
+
+      // Highlighting logic
+      const highlightSpans = data.spans.errors.map((error: ErrorType) => ({
+        start: error.start_index_translation,
+        end: error.end_index_translation,
+        color: errorColors[error.error_type] || "#FFFFFF",
+      }));
+      //setHighlightSpans(highlightSpans); // Update state with highlight spans
+
+      // Prepare text parts for rendering
+      const textParts: { text: string; highlighted: boolean, color: string }[] = [];
+      let currentIndex = 0;
+
+      highlightSpans.forEach((span) => {
+        // Add non-highlighted text before the highlight
+        if (span.start > currentIndex) {
+          const nonHighlightedText = translation.substring(currentIndex, span.start);
+          textParts.push({ text: nonHighlightedText, highlighted: false, color: "#000000" });
+        }
+  
+        // Add highlighted text
+        const highlightedText = translation.substring(span.start, span.end);
+        textParts.push({ text: highlightedText, highlighted: true, color: span.color });
+  
+        // Update currentIndex
+        currentIndex = span.end;
+      });
+  
+      // Add remaining non-highlighted text if any
+      if (currentIndex < translation.length) {
+        const remainingText = translation.substring(currentIndex);
+        textParts.push({ text: remainingText, highlighted: false, color: "#000000" });
+      }
+  
+      setTextParts(textParts); // Update state with text parts
       setTranslationSubmitted(true); // Set translation submitted flag to true
     } catch (error) {
       console.error("Error:", error);
@@ -226,8 +271,21 @@ const App: React.FC = () => {
           onMouseMove={handleMouseMove}
           onMouseLeave={handleMouseLeave}
           onMouseEnter={handleMouseEnter}
-          dangerouslySetInnerHTML={{ __html: sanitizedHtmlString }}
-        />
+          /*dangerouslySetInnerHTML={{ __html: sanitizedHtmlString }}*/
+        >
+          {textParts.map((part, index) => (
+            <span
+              key={index}
+              className={part.highlighted ? "highlight" : ""}
+              style={{
+                backgroundColor: part.highlighted ? errorColors[error_type] || "#FFFFFF" : "transparent",
+                padding: "1vh 1vw",
+              }}
+            >
+              {part.text}
+            </span>
+          ))}
+        </div>
 
         <div className="error-tooltip-container" style={popupStyle}>
           <div className="error-tooltip">
