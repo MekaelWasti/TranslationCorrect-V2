@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 // import loadingIconGrey from './assets/loading_icon_grey.svg';
 import loadingIconWhite from "./assets/loading_icon_white.svg";
 // import parse from 'html-react-parser';
@@ -11,14 +11,86 @@ const App: React.FC = () => {
   const translationTextRef = useRef<HTMLDivElement | null>(null);
 
   const [sanitizedHtmlString, setSanitizedHtmlString] = useState(
-    "<span><span class='highlight' style='background-color: #00A0F0; padding: 0vh 0vw 0vh 0vw; zIndex: 0'>Student</span>s from Stanford University Medical School an<span class='highlight' style='background-color: #D3365A; padding: 1vh 0vw 1vh 0vw; zIndex: 1'>nounced Monday the invention of a new diag<span class='highlight' style='background-color: #59c00aba; padding: 2vh 0vw 2vh 0vw; zIndex: 2'>nostic tool tha</span></span>t can sort cells by type of small printed chip</span>"
+    // "<span><span class='highlight' style='background-color: #00A0F0; padding: 0vh 0vw 0vh 0vw; zIndex: 0'>Student</span>s from Stanford University Medical School an<span class='highlight' style='background-color: #D3365A; padding: 1vh 0vw 1vh 0vw; zIndex: 1'>nounced Monday the invention of a new diag<span class='highlight' style='background-color: #59c00aba; padding: 2vh 0vw 2vh 0vw; zIndex: 2'>nostic tool tha</span></span>t can sort cells by type of small printed chip</span>"
+    // "<span><span id='highlight-0' class='highlight' onMouseMove={handleMouseMove(event)} onMouseLeave={handleMouseLeave(event)} onMouseEnter={handleMouseEnter(event)} style='background-color: #00A0F0; padding: 0vh 0vw 0vh 0vw; zIndex: 0'>Student</span>s from Stanford University Medical School an<span id='highlight-1' class='highlight' onMouseMove={handleMouseMove(event)} onMouseLeave={handleMouseLeave(event)} onMouseEnter={handleMouseEnter(event)} style='background-color: #D3365A; padding: 1vh 0vw 1vh 0vw; zIndex: 1'>nounced Monday the invention of a new diag<span id='highlight-2' class='highlight' onMouseMove={handleMouseMove(event)} onMouseLeave={handleMouseLeave(event)} onMouseEnter={handleMouseEnter(event)} style='background-color: #59c00aba; padding: 2vh 0vw 2vh 0vw; zIndex: 2'>nostic tool tha</span></span>t can sort cells by type of small printed chip</span>"
+    // "<span><span id='highlight-0' class='highlight' onMouseMove={handleMouseMove(event)} onMouseLeave={handleMouseLeave(event)} onMouseEnter={handleMouseEnter(event)} style='background-color: #FF5733; padding: 0vh 0vw 0vh 0vw; zIndex: 0'>Students from Stanfo</span>rd University Medical School announced Monday the invention of a new diagnostic tool that can sort cells by type of small printed chip</span>"
+    null
   );
+  const spans: { errors: Error[] }[] = [
+    {
+      errors: [
+        {
+          original_text: "Учените",
+          translated_text: "Students",
+          correct_text: "Scientists",
+          start_index_orig: 0,
+          end_index_orig: 7,
+          start_index_translation: 0,
+          end_index_translation: 7,
+          error_type: "Incorrect Subject",
+        },
+        {
+          original_text: "изобретяването на нов диагностичен инструмент",
+          translated_text:
+            "the invention of a new diagnostic tool that can sort cells by a type of small printed",
+          correct_text: "the invention of a new diagnostic tool",
+          start_index_orig: 43,
+          end_index_orig: 75,
+          start_index_translation: 51,
+          end_index_translation: 108,
+          error_type: "Incomplete Sentence",
+        },
+        {
+          original_text:
+            "който може да сортира клетките по тип: малък печатен чип",
+          translated_text: "",
+          correct_text: "that can sort cells by type: small printed chip",
+          start_index_orig: 75,
+          end_index_orig: 131,
+          start_index_translation: 86,
+          end_index_translation: 108,
+          error_type: "Omission",
+        },
+      ],
+    },
+  ];
+
+  type Error = {
+    original_text: string;
+    translated_text: string;
+    correct_text: string;
+    start_index_orig: number;
+    end_index_orig: number;
+    start_index_translation: number;
+    end_index_translation: number;
+    error_type: string;
+    color?: string; // Add the optional color property
+  };
+
+  // const colors: { [key: string]: string } = {
+  //   "Incorrect Subject": "#00A0F0",
+  //   Omission: "#59c00aba",
+  //   "Incomplete Sentence": "#D3365A",
+  // };
+
+  const colors = {
+    "Addition of Text": "#FF5733", // Orange-Red
+    "Negation Errors": "#00A0F0", // Bright Blue
+    "Mask In-filling": "#59c00a", // Lime Green
+    "Named Entity (NE) Errors": "#D3365A", // Deep Pink
+    "Number (NUM) Errors": "#8B4513", // Saddle Brown
+    Hallucinations: "#800080", // Purple
+  };
+
+  const [highlightedError, setHighlightedError] = useState<any | null>(null);
 
   const [sourceTextInput, setSourceTextInput] = useState(
-    "Kuwa mbere, abahanga ba siyansi bo mu Ishuri rikuru ry’ubuvuzi rya kaminuza ya Stanford bataganje ko havumbuwe igikoresho gishya cyo gusuzuma gishobora gutandukanya ingirabuzima"
+    // "Kuwa mbere, abahanga ba siyansi bo mu Ishuri rikuru ry’ubuvuzi rya kaminuza ya Stanford bataganje ko havumbuwe igikoresho gishya cyo gusuzuma gishobora gutandukanya ingirabuzima"
+    null
   );
   const [translation, setTranslation] = useState("");
   const [error_type, setErrorType] = useState("Incorrect Subject");
+  const [error_spans, setErrorSpans] = useState(spans[0].errors);
   const [isLoading, setIsLoading] = useState(false);
   const [popupStyle, setPopupStyle] = useState({
     top: 0,
@@ -62,19 +134,66 @@ const App: React.FC = () => {
       console.log(data.highlights);
       const sanitized = DOMPurify.sanitize(data.highlights);
       setSanitizedHtmlString(sanitized);
+
+      // Start Generating Spans Asynchronously
+      // Trigger the secondary operation asynchronously
+      fetch_generated_spans(userInput);
     } catch (error) {
       console.error("Error:", error);
       setIsLoading(false);
     }
   };
 
-  const handleMouseEnter = (event: React.MouseEvent) => {
-    console.log("ENTERED");
+  const fetch_generated_spans = async (userInput: string) => {
+    try {
+      const response = await fetch(
+        "http://127.0.0.1:63030/fetch_error_spans/",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ value: userInput }),
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const data = await response.json();
+      console.log("Fetched Spans:", data);
+      setErrorSpans(data.spans);
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  };
+
+  const handleMouseEnter = (event: MouseEvent) => {
+    const target = event.target as HTMLElement;
+    if (target && target.id) {
+      const index = parseInt(target.id.replace("highlight-", ""), 10);
+
+      const errorType = spans[0].errors[index].error_type;
+      const currentColor = colors[errorType];
+
+      if (currentColor) {
+        // Update the error object with the new color key
+        spans[0].errors[index] = {
+          ...spans[0].errors[index],
+          color: currentColor,
+        };
+      }
+
+      setHighlightedError(spans[0].errors[index]);
+    }
+
     setPopupStyle({
       top: event.clientY + 30,
       left: event.clientX - 150,
       display: "block",
     });
+    // console.log("Mouse enter", event);
   };
 
   const handleMouseMove = (event: React.MouseEvent) => {
@@ -87,9 +206,32 @@ const App: React.FC = () => {
   };
 
   const handleMouseLeave = () => {
-    console.log("LEFT");
+    // console.log("LEFT");
     setPopupStyle({ ...popupStyle, display: "none" });
   };
+
+  const errorHighlightContainerRef = useRef<HTMLDivElement | null>(null);
+  useEffect(() => {
+    if (errorHighlightContainerRef.current !== null) {
+      errorHighlightContainerRef.current.innerHTML = sanitizedHtmlString;
+      const highlights =
+        errorHighlightContainerRef.current.querySelectorAll(".highlight");
+      // Attach event listeners to each element
+      highlights.forEach((element) => {
+        element.addEventListener("mousemove", handleMouseMove);
+        element.addEventListener("mouseleave", handleMouseLeave);
+        element.addEventListener("mouseenter", handleMouseEnter);
+      });
+      // Cleanup event listeners on component unmount
+      return () => {
+        highlights.forEach((element) => {
+          element.removeEventListener("mousemove", handleMouseMove);
+          element.removeEventListener("mouseleave", handleMouseLeave);
+          element.removeEventListener("mouseenter", handleMouseEnter);
+        });
+      };
+    }
+  }, [sanitizedHtmlString]);
 
   return (
     <div className="landing-page-parent">
@@ -169,17 +311,29 @@ const App: React.FC = () => {
 
         <div
           className="highlight-container"
-          onMouseMove={handleMouseMove}
-          onMouseLeave={handleMouseLeave}
-          onMouseEnter={handleMouseEnter}
+          ref={errorHighlightContainerRef}
+          // onMouseMove={handleMouseMove}
+          // onMouseLeave={handleMouseLeave}
+          // onMouseEnter={handleMouseEnter}
           dangerouslySetInnerHTML={{ __html: sanitizedHtmlString }}
         />
 
         <div className="error-tooltip-container" style={popupStyle}>
           <div className="error-tooltip">
-            <h3>Error Type:</h3>
-            <h3 style={{ color: "#00A0F0" }}> {error_type}</h3>
-            <p>Additional Details... TBD</p>
+            {highlightedError ? (
+              <>
+                <h3>Error Type:</h3>
+                <h3 style={{ color: highlightedError.color }}>
+                  {" "}
+                  {highlightedError.error_type}
+                </h3>
+                {/* <p>Original Text: {highlightedError.original_text}</p> */}
+                {/* <p>Translated Text: {highlightedError.translated_text}</p> */}
+                <p>Correct Text: {highlightedError.correct_text}</p>
+              </>
+            ) : (
+              <p>No highlight selected</p>
+            )}
           </div>
         </div>
 
