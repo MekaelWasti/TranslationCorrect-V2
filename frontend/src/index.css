@@ -175,7 +175,7 @@ li {
 
 .text-input textarea {
   height: 31.35vh;
-  width: 50%;
+  width: 100%;
   border: none;
   outline: none;
   background: none;
@@ -331,17 +331,32 @@ li {
 
 .error-legend-section {
   display: flex;
-  /* width: fit-content; */
+  justify-content: space-between;
+  width: 100%;
+  padding: 0 10vw; /* Optional: Adjust the padding as needed */
 }
 
-.error-legend-section > p {
-  /* width: fit-content; */
+.error-legend-section ul {
+  display: flex;
+  list-style-type: none; /* Optional: Removes bullet points */
+  margin: 0;
+  padding: 0; /* Optional: Removes default padding */
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+}
+
+.error-legend-section li {
+  display: flex;
+  align-items: center;
+  margin-right: 10px; /* Adjust space between items */
 }
 
 .color-label {
-  width: 4.5vw;
-  height: 4.5vw;
+  width: 1vw;
+  height: 1vw;
   border-radius: 50%;
+  margin-right: 5px; /* Adjust space between label and text */
 }
 
 /* Edit Context */
@@ -429,4 +444,9 @@ li {
   font-size: small;
   font-style: italic;
   text-decoration: underline;
+}
+
+.slider {
+  width: 100%;
+  margin: 20px 0;
 }

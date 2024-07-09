@@ -6,6 +6,26 @@ import DOMPurify from "dompurify";
 import "./App.css";
 import "./index.css";
 
+interface ApiResponse {
+  received_string: string;
+  response: string;
+  spans: {
+    errors: ErrorType[];
+  };
+  highlights: string;
+}
+
+interface ErrorType {
+  original_text: string;
+  translated_text: string;
+  correct_text: string;
+  start_index_orig: number;
+  end_index_orig: number;
+  start_index_translation: number;
+  end_index_translation: number;
+  error_type: string;
+}
+
 const App: React.FC = () => {
   const sourceTextRef = useRef(null);
   const translationTextRef = useRef<HTMLDivElement | null>(null);
@@ -14,7 +34,7 @@ const App: React.FC = () => {
     // "<span><span class='highlight' style='background-color: #00A0F0; padding: 0vh 0vw 0vh 0vw; zIndex: 0'>Student</span>s from Stanford University Medical School an<span class='highlight' style='background-color: #D3365A; padding: 1vh 0vw 1vh 0vw; zIndex: 1'>nounced Monday the invention of a new diag<span class='highlight' style='background-color: #59c00aba; padding: 2vh 0vw 2vh 0vw; zIndex: 2'>nostic tool tha</span></span>t can sort cells by type of small printed chip</span>"
     // "<span><span id='highlight-0' class='highlight' onMouseMove={handleMouseMove(event)} onMouseLeave={handleMouseLeave(event)} onMouseEnter={handleMouseEnter(event)} style='background-color: #00A0F0; padding: 0vh 0vw 0vh 0vw; zIndex: 0'>Student</span>s from Stanford University Medical School an<span id='highlight-1' class='highlight' onMouseMove={handleMouseMove(event)} onMouseLeave={handleMouseLeave(event)} onMouseEnter={handleMouseEnter(event)} style='background-color: #D3365A; padding: 1vh 0vw 1vh 0vw; zIndex: 1'>nounced Monday the invention of a new diag<span id='highlight-2' class='highlight' onMouseMove={handleMouseMove(event)} onMouseLeave={handleMouseLeave(event)} onMouseEnter={handleMouseEnter(event)} style='background-color: #59c00aba; padding: 2vh 0vw 2vh 0vw; zIndex: 2'>nostic tool tha</span></span>t can sort cells by type of small printed chip</span>"
     // "<span><span id='highlight-0' class='highlight' onMouseMove={handleMouseMove(event)} onMouseLeave={handleMouseLeave(event)} onMouseEnter={handleMouseEnter(event)} style='background-color: #FF5733; padding: 0vh 0vw 0vh 0vw; zIndex: 0'>Students from Stanfo</span>rd University Medical School announced Monday the invention of a new diagnostic tool that can sort cells by type of small printed chip</span>"
-    null
+    ""
   );
   const spans: { errors: Error[] }[] = [
     {
@@ -54,6 +74,10 @@ const App: React.FC = () => {
       ],
     },
   ];
+
+  const [errorLegend, setErrorLegend] = useState<
+    { error_type: string; color: string }[]
+  >([]);
 
   type Error = {
     original_text: string;
@@ -113,13 +137,13 @@ const App: React.FC = () => {
   const sendTranslation = async (userInput: string) => {
     try {
       const response = await fetch(
-        "http://127.0.0.1:63030/submit_translation/",
+        "http://127.0.0.1:63030/submit_translation",
         {
           method: "POST",
           headers: {
-            "Content-Type": "application/json",
+            "Content-Type": "application/json; charset=UTF-8", // Need UTF-8 encoding
           },
-          body: JSON.stringify({ value: userInput }),
+          body: JSON.stringify({ value: userInput, translation: "" }),
         }
       );
 
@@ -137,36 +161,55 @@ const App: React.FC = () => {
 
       // Start Generating Spans Asynchronously
       // Trigger the secondary operation asynchronously
-      fetch_generated_spans(userInput);
+      fetch_generated_spans(userInput, translation);
     } catch (error) {
       console.error("Error:", error);
       setIsLoading(false);
     }
   };
 
-  const fetch_generated_spans = async (userInput: string) => {
-    try {
-      const response = await fetch(
-        "http://127.0.0.1:63030/fetch_error_spans/",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ value: userInput }),
+  const fetch_generated_spans = (userInput: string, translation: string) => {
+    const intervalId = setInterval(async () => {
+      try {
+        const response = await fetch(
+          "http://127.0.0.1:63030/fetch_error_spans",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json; charset=UTF-8", // Need UTF-8 encoding
+            },
+            body: JSON.stringify({
+              value: userInput,
+              translation: translation,
+            }), // Correctly format the payload
+          }
+        );
+
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
         }
-      );
 
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+        const data = await response.json();
+        setErrorSpans(data.error_spans);
+
+        if (Object.keys(data.error_spans).length > 0) {
+          clearInterval(intervalId); // Stop polling once the data is available
+          console.log("Secondary operation result:", data.error_spans);
+          // Process the result of the secondary operation
+
+          console.log(data.highlights);
+          const sanitized = DOMPurify.sanitize(data.highlights);
+          setSanitizedHtmlString(sanitized);
+          // let error_spans = data.error_spans.replace(/'/g, '"');
+
+          // console.log(JSON.parse(error_spans).errors[0]);
+          // setHighlightedError(JSON.parse(error_spans).errors[0]);
+          setHighlightedError(data.error_spans.errors[0]);
+        }
+      } catch (error) {
+        console.error("Error:", error);
       }
-
-      const data = await response.json();
-      console.log("Fetched Spans:", data);
-      setErrorSpans(data.spans);
-    } catch (error) {
-      console.error("Error:", error);
-    }
+    }, 2000); // Poll every 1 second, adjust interval as needed
   };
 
   const handleMouseEnter = (event: MouseEvent) => {
@@ -232,6 +275,37 @@ const App: React.FC = () => {
       };
     }
   }, [sanitizedHtmlString]);
+
+  // SLIDER SECTION
+
+  const [value1, setValue1] = useState<number>(50);
+  const [value2, setValue2] = useState<number>(50);
+  const [spanScores, setSpanScores] = useState<{ [key: string]: number }>({});
+
+  const handleChange1 = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setValue1(Number(event.target.value));
+  };
+
+  const handleChange2 = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setValue2(Number(event.target.value));
+  };
+
+  const handleSpanClick = (index: number) => {
+    setSpanScores((prevScores) => ({ ...prevScores, [index]: value1 }));
+  };
+
+  const injectOnClickHandler = (htmlString: string) => {
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(htmlString, "text/html");
+    const spans = doc.querySelectorAll(".highlight");
+    spans.forEach((span, index) => {
+      span.setAttribute("onClick", `handleSpanClick(${index})`);
+      span.setAttribute("data-index", index.toString());
+    });
+    return doc.body.innerHTML;
+  };
+
+  const enhancedHtmlString = injectOnClickHandler(sanitizedHtmlString);
 
   return (
     <div className="landing-page-parent">
@@ -340,25 +414,71 @@ const App: React.FC = () => {
         <hr className="divider" />
         <div className="error-legend-section">
           <ul>
-            <div
-              className="color-label"
-              style={{ backgroundColor: "#113c6a" }}
-            ></div>
-            <p>Incomplete Subject</p>
-            <div
-              className="color-label"
-              style={{ backgroundColor: "#2CF551" }}
-            ></div>
-            <p>Omission</p>
-            <div
-              className="color-label"
-              style={{ backgroundColor: "#A5304C" }}
-            ></div>
-            <p>Incomplete Sentence</p>
+            <li>
+              <div
+                className="color-label"
+                style={{ backgroundColor: "#113c6a" }}
+              ></div>
+              <p>Incomplete Subject</p>
+            </li>
+            <li>
+              <div
+                className="color-label"
+                style={{ backgroundColor: "#2CF551" }}
+              ></div>
+              <p>Omission</p>
+            </li>
+            <li>
+              <div
+                className="color-label"
+                style={{ backgroundColor: "#A5304C" }}
+              ></div>
+              <p>Incomplete Sentence</p>
+            </li>
           </ul>
         </div>
         <hr className="divider" />
       </div>
+
+      {/* slider Section */}
+      <h2 className="source-text-title">Slider</h2>
+
+      <div className="slide">
+        Individual Span Scoring
+        <input
+          type="range"
+          min="0"
+          max="100"
+          value={value1}
+          onChange={handleChange1}
+          className="slider"
+        />
+        <p>Value: {value1}</p>
+        <hr className="divider" />
+      </div>
+      <div className="slide">
+        Overall Sentence Scoring
+        <input
+          type="range"
+          min="0"
+          max="100"
+          value={value2}
+          onChange={handleChange2}
+          className="slider"
+        />
+        <p>Value: {value2}</p>
+        <hr className="divider" />
+      </div>
+      <div className="scores">
+        <h2>Scores</h2>
+        {Object.entries(spanScores).map(([index, score]) => (
+          <p key={index}>
+            Span {index}: {score}
+          </p>
+        ))}
+        <p>Overall Sentence Score: {value2}</p>
+      </div>
+      <hr className="divider" />
 
       {/* Edit Context Section */}
 
