@@ -98,8 +98,13 @@ def fetch_error_spans(item: StringItem):
     
     spans = error_spans_storage.get(src, [])
 
-    error_spans = spans[0]
-    highlights = spans[1]
+    if spans:
+        error_spans = spans[0]
+        highlights = spans[1]
+    else:
+        error_spans = {}
+        highlights = ""
+
 
     print(f"Returning Spans: {error_spans}")
 

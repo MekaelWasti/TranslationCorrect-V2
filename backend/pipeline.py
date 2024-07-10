@@ -53,13 +53,14 @@ def generate_error_spans(error_span_model, client, src, mt):
 
   # GPT Call for error type classification and spans formatting
   response = client.chat.completions.create(
+  # model="gpt-4o",
   model="gpt-3.5-turbo-16k",
   messages=[
     {
       "role": "system",
       "content": [
         {
-          "text": "You are an expert in multilingual translations. Given MQM scores, corrected text, error spans, you will determine a classification for the error out of ONLY ONE OF the following. YOU CAN ONLY USE ERROR TYPE FROM THE FOLLOWING: Addition of Text ,Negation Errors ,Mask In-filling ,Named Entity (NE) Errors ,Number (NUM) Errors ,Hallucinations. \n\nThen turn that into this format by correctly indicating the start and end corresponding indices\n\n{\r\n    \"errors\": [\r\n      {\r\n        \"original_text\": \"Учените\",\r\n        \"translated_text\": \"Students\",\r\n        \"correct_text\": \"Scientists\",\r\n        \"start_index_orig\": 0,\n\r\n        \"end_index_orig\": 7,\r\n        \"start_index_translation\": 0,\r\n        \"end_index_translation\": 7,\r\n        \"error_type\": \"Incorrect Subject\"\r\n      } \n    ]\r\n  }\r\n\r\n",
+          "text": "You are an expert in multilingual translations. Given MQM scores, corrected text, error spans, you will determine a classification for the error out of ONLY ONE OF the following. YOU CAN ONLY USE ERROR TYPE FROM THE FOLLOWING: Addition of Text ,Negation Errors ,Mask In-filling ,Named Entity (NE) Errors ,Number (NUM) Errors ,Hallucinations. \n\nThe output MUST be in JSON format and be correctly indicating the start and end corresponding indices\n\n{\r\n    \"errors\": [\r\n      {\r\n        \"original_text\": \"Учените\",\r\n        \"translated_text\": \"Students\",\r\n        \"correct_text\": \"Scientists\",\r\n        \"start_index_orig\": 0,\n\r\n        \"end_index_orig\": 7,\r\n        \"start_index_translation\": 0,\r\n        \"end_index_translation\": 7,\r\n        \"error_type\": \"Incorrect Subject\"\r\n      } \n    ]\r\n  }\r\n\r\n",
           "type": "text"
         }
       ]
@@ -83,6 +84,7 @@ def generate_error_spans(error_span_model, client, src, mt):
   )
 
   json_object = json.loads(response.choices[0].message.content)
+  print(json_object)
 
   # with open('response.json', 'w') as f:
       # json.dump(json_object, f, indent=4)
@@ -118,10 +120,12 @@ def errorSpanHighlighter(translation, spans):
         if error["error_type"] in color_mappings: 
           color = color_mappings[error["error_type"]]
         else:
-           color = "#FFFFFF"
+           color = "#2f3472"
+
+        id = zIndex
 
         # tags
-        Ltag = "<span class='highlight' style='background-color: " + color + "; padding: " + str(zIndex) + "vh 0vw " + str(zIndex) + "vh 0vw; zIndex: " + str(zIndex) + "'>"
+        Ltag = "<span class='highlight' id='highlight-" + str(id) + "' style='background-color: " + color + "; padding: " + str(zIndex) + "vh 0vw " + str(zIndex) + "vh 0vw; zIndex: " + str(zIndex) + "'>"
         Rtag = "</span>"
         
         # Algo

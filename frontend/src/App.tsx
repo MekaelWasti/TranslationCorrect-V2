@@ -36,44 +36,44 @@ const App: React.FC = () => {
     // "<span><span id='highlight-0' class='highlight' onMouseMove={handleMouseMove(event)} onMouseLeave={handleMouseLeave(event)} onMouseEnter={handleMouseEnter(event)} style='background-color: #FF5733; padding: 0vh 0vw 0vh 0vw; zIndex: 0'>Students from Stanfo</span>rd University Medical School announced Monday the invention of a new diagnostic tool that can sort cells by type of small printed chip</span>"
     ""
   );
-  const spans: { errors: Error[] }[] = [
-    {
-      errors: [
-        {
-          original_text: "Учените",
-          translated_text: "Students",
-          correct_text: "Scientists",
-          start_index_orig: 0,
-          end_index_orig: 7,
-          start_index_translation: 0,
-          end_index_translation: 7,
-          error_type: "Incorrect Subject",
-        },
-        {
-          original_text: "изобретяването на нов диагностичен инструмент",
-          translated_text:
-            "the invention of a new diagnostic tool that can sort cells by a type of small printed",
-          correct_text: "the invention of a new diagnostic tool",
-          start_index_orig: 43,
-          end_index_orig: 75,
-          start_index_translation: 51,
-          end_index_translation: 108,
-          error_type: "Incomplete Sentence",
-        },
-        {
-          original_text:
-            "който може да сортира клетките по тип: малък печатен чип",
-          translated_text: "",
-          correct_text: "that can sort cells by type: small printed chip",
-          start_index_orig: 75,
-          end_index_orig: 131,
-          start_index_translation: 86,
-          end_index_translation: 108,
-          error_type: "Omission",
-        },
-      ],
-    },
-  ];
+  // const spans: { errors: Error[] }[] = [
+  //   {
+  //     errors: [
+  //       {
+  //         original_text: "Учените",
+  //         translated_text: "Students",
+  //         correct_text: "Scientists",
+  //         start_index_orig: 0,
+  //         end_index_orig: 7,
+  //         start_index_translation: 0,
+  //         end_index_translation: 7,
+  //         error_type: "Incorrect Subject",
+  //       },
+  //       {
+  //         original_text: "изобретяването на нов диагностичен инструмент",
+  //         translated_text:
+  //           "the invention of a new diagnostic tool that can sort cells by a type of small printed",
+  //         correct_text: "the invention of a new diagnostic tool",
+  //         start_index_orig: 43,
+  //         end_index_orig: 75,
+  //         start_index_translation: 51,
+  //         end_index_translation: 108,
+  //         error_type: "Incomplete Sentence",
+  //       },
+  //       {
+  //         original_text:
+  //           "който може да сортира клетките по тип: малък печатен чип",
+  //         translated_text: "",
+  //         correct_text: "that can sort cells by type: small printed chip",
+  //         start_index_orig: 75,
+  //         end_index_orig: 131,
+  //         start_index_translation: 86,
+  //         end_index_translation: 108,
+  //         error_type: "Omission",
+  //       },
+  //     ],
+  //   },
+  // ];
 
   const [errorLegend, setErrorLegend] = useState<
     { error_type: string; color: string }[]
@@ -114,7 +114,8 @@ const App: React.FC = () => {
   );
   const [translation, setTranslation] = useState("");
   const [error_type, setErrorType] = useState("Incorrect Subject");
-  const [error_spans, setErrorSpans] = useState(spans[0].errors);
+  // const [error_spans, setErrorSpans] = useState(spans[0].errors);
+  const [error_spans, setErrorSpans] = useState();
   const [isLoading, setIsLoading] = useState(false);
   const [popupStyle, setPopupStyle] = useState({
     top: 0,
@@ -160,15 +161,17 @@ const App: React.FC = () => {
       setSanitizedHtmlString(sanitized);
 
       // Start Generating Spans Asynchronously
-      // Trigger the secondary operation asynchronously
-      fetch_generated_spans(userInput, translation);
+      fetch_generated_spans(userInput, data.response);
     } catch (error) {
       console.error("Error:", error);
       setIsLoading(false);
     }
   };
 
-  const fetch_generated_spans = (userInput: string, translation: string) => {
+  const fetch_generated_spans = async (
+    userInput: string,
+    translation: string
+  ) => {
     const intervalId = setInterval(async () => {
       try {
         const response = await fetch(
@@ -198,18 +201,15 @@ const App: React.FC = () => {
           // Process the result of the secondary operation
 
           console.log(data.highlights);
+          console.log(data.error_spans.errors);
           const sanitized = DOMPurify.sanitize(data.highlights);
           setSanitizedHtmlString(sanitized);
-          // let error_spans = data.error_spans.replace(/'/g, '"');
-
-          // console.log(JSON.parse(error_spans).errors[0]);
-          // setHighlightedError(JSON.parse(error_spans).errors[0]);
-          setHighlightedError(data.error_spans.errors[0]);
+          setHighlightedError(data.error_spans.errors);
         }
       } catch (error) {
         console.error("Error:", error);
       }
-    }, 2000); // Poll every 1 second, adjust interval as needed
+    }, 2000); // Poll every 2 seconds, adjust interval as needed
   };
 
   const handleMouseEnter = (event: MouseEvent) => {
@@ -217,33 +217,45 @@ const App: React.FC = () => {
     if (target && target.id) {
       const index = parseInt(target.id.replace("highlight-", ""), 10);
 
-      const errorType = spans[0].errors[index].error_type;
+      let spans = null;
+
+      if (highlightedError !== null) {
+        spans = highlightedError;
+      }
+
+      console.log("SPANS");
+      console.log(spans);
+
+      const errorType = spans[index].error_type;
       const currentColor = colors[errorType];
 
       if (currentColor) {
         // Update the error object with the new color key
-        spans[0].errors[index] = {
-          ...spans[0].errors[index],
+        spans[index] = {
+          ...spans[index],
           color: currentColor,
         };
       }
 
-      setHighlightedError(spans[0].errors[index]);
+      setHighlightedError(spans[index]);
     }
 
+    const scrollTop = window.scrollY || document.documentElement.scrollTop;
+    const scrollLeft = window.scrollX || document.documentElement.scrollLeft;
+
     setPopupStyle({
-      top: event.clientY + 30,
-      left: event.clientX - 150,
+      top: 300,
+      left: 150,
       display: "block",
     });
-    // console.log("Mouse enter", event);
+    console.log("Mouse enter", event);
   };
 
   const handleMouseMove = (event: React.MouseEvent) => {
     // console.log("MOVING", event.clientX, event.clientY);
     setPopupStyle({
-      top: event.clientY + 375,
-      left: event.clientX - 150,
+      top: event.pageY + 50,
+      left: event.pageX - 185,
       display: "block",
     });
   };
@@ -401,8 +413,8 @@ const App: React.FC = () => {
                   {" "}
                   {highlightedError.error_type}
                 </h3>
-                {/* <p>Original Text: {highlightedError.original_text}</p> */}
-                {/* <p>Translated Text: {highlightedError.translated_text}</p> */}
+                <p>Original Text: {highlightedError.original_text}</p>
+                <p>Translated Text: {highlightedError.translated_text}</p>
                 <p>Correct Text: {highlightedError.correct_text}</p>
               </>
             ) : (

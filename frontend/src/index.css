@@ -304,7 +304,7 @@ li {
   z-index: 10;
   /* display: flex; */
   background-color: #222222;
-  padding: 1vh 1vw 1vh 1vw;
+  padding: 1vh 1vw 1vh 0vw;
   border-radius: 8px;
   width: fit-content;
   outline: #333333 solid 1px;

@@ -1,14 +1,14 @@
 {
     "errors": [
         {
-            "original_text": "Didn't",
-            "translated_text": "\u6ca1\u6709",
-            "correct_text": "\u6ca1\u6709",
-            "start_index_orig": 24,
-            "end_index_orig": 29,
-            "start_index_translation": 23,
-            "end_index_translation": 25,
-            "error_type": "Negation Errors"
+            "original_text": "\u8c28\u614e\u7684.",
+            "translated_text": "careful.",
+            "correct_text": "careful",
+            "start_index_orig": 1,
+            "end_index_orig": 5,
+            "start_index_translation": 6,
+            "end_index_translation": 13,
+            "error_type": "Mask In-filling"
         }
     ]
 }
