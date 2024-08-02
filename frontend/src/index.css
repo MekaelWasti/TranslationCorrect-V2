@@ -450,3 +450,179 @@ li {
   width: 100%;
   margin: 20px 0;
 }
+
+.machine--translation:focus {
+  outline: none;
+}
+
+.machine--translation > span:hover {
+  outline: 2px solid #ffffff;
+  /* outline-offset: 0.1rem; */
+}
+
+.highlight {
+  padding: 0 2px;
+  user-select: none;
+}
+
+.error-tooltip-container {
+  position: absolute;
+  background-color: white;
+  border: 1px solid #ccc;
+  padding: 10px;
+  border-radius: 4px;
+  z-index: 1000;
+}
+
+.error-tooltip {
+  position: absolute;
+  z-index: 10;
+  /* display: flex; */
+  background-color: #222222;
+  padding: 2vh 2vw 2vh 2vw;
+  border-radius: 8px;
+  width: fit-content;
+  outline: #ffffff28 solid 2px;
+  line-height: 6vh;
+}
+
+.span-dropdown {
+  position: absolute;
+  z-index: 10;
+  /* display: flex; */
+  background-color: #222222;
+  /* padding: 2vh 2vw 2vh 2vw; */
+  padding: 0.5vh 0.5vw 0.5vh 0.5vw;
+  border-radius: 8px;
+  width: fit-content;
+  outline: #ffffff28 solid 2px;
+  line-height: 0.1vh;
+}
+
+.span-dropdown > ul {
+  padding: 0 0 0 0;
+  margin: 0;
+}
+
+.span-dropdown > ul > li {
+  padding: 0 0 0 0;
+  font-size: small;
+}
+
+.dropdown-selection {
+  width: 100%;
+}
+
+.dropdown-selection > li {
+  padding: 0 0 0 0;
+  font-size: small;
+  padding: 0.8vh 1vw 0.8vh 1vw;
+}
+
+.dropdown-selection p {
+  font-weight: bold;
+  /* text-align: center; */
+  padding-left: 0.5rem;
+  width: 100%;
+}
+
+.dropdown-selection li:hover {
+  /* text-align: center; */
+  font-weight: bold;
+  /* color: greenyellow; */
+}
+
+.dropdown-selection li:hover {
+  /* text-align: center; */
+  font-weight: bold;
+  color: var(--hover-color); /* Use the custom property */
+  cursor: pointer;
+}
+
+.dropdown-selection > hr {
+  margin: 0 0 0 0;
+  padding: 0 0 0 0;
+  width: 100%;
+  border: 1px solid #ffffff22;
+}
+
+.dropdown-divider {
+  /* margin-top: 5vh; */
+  /* margin-bottom: 5vh; */
+  border: 1px solid #262626;
+}
+
+/* Edit Context Section */
+
+.edit-context {
+  display: flex;
+  align-items: center;
+
+  /* justify-content: center; */
+  /* width: 100%; */
+}
+
+.custom-correction-button,
+.insert-span-button {
+  margin: 2vh 2vw 1vh 2vw;
+  padding: 1vh 3vw 1vh 3vw;
+  border-radius: 7px;
+  background-color: #222222;
+  border: none;
+  color: white;
+  font-size: 1rem;
+  font-weight: 550;
+  cursor: pointer;
+}
+
+.custom-correction-button:hover,
+.insert-span-button:hover {
+  background-color: #373737;
+}
+
+.custom-correction-button:active,
+.insert-span-button:active {
+  background-color: #1e1e1e;
+}
+
+.slider-section {
+  display: flex;
+}
+
+.slider-section > .span-slider {
+  width: 40%;
+}
+
+.span-slider {
+  cursor: pointer;
+  -webkit-appearance: none; /* Override default CSS styles */
+  appearance: none;
+  width: 100%; /* Full-width */
+  height: 7px; /* Specified height */
+  background: rgb(75, 75, 75);
+  /* background: linear-gradient( */
+  /* to right, */
+  /* #4caf50, */
+  /* #f44336 */
+  /* ); Gradient background */
+  border-radius: 5px; /* Rounded corners */
+  outline: none; /* Remove outline */
+  opacity: 0.8; /* Slightly transparent */
+  -webkit-transition: 0.2s; /* 0.2 seconds transition on hover */
+  transition: opacity 0.2s;
+}
+
+.span-slider::-webkit-slider-thumb {
+  -webkit-appearance: none; /* Override default look */
+  appearance: none;
+  width: 15px; /* Thumb width */
+  height: 15px; /* Thumb height */
+  background: #ffffff; /* Green background for the thumb */
+  border-radius: 50%; /* Rounded thumb */
+  cursor: pointer; /* Cursor on hover */
+}
+
+/* Scoring Slider Section */
+
+.scoring-slider-section {
+}

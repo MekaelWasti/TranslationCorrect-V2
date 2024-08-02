@@ -1,4 +1,7 @@
+# python3.10 -m uvicorn main:app --reload --host 0.0.0.0 --port 63030
 # uvicorn main:app --reload --host 0.0.0.0 --port 63030
+
+
 from fastapi import FastAPI, Form, Request
 from fastapi.middleware.cors import CORSMiddleware
 from transformers import AutoModelForSeq2SeqLM, AutoTokenizer

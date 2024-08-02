@@ -34,7 +34,7 @@ const App: React.FC = () => {
     // "<span><span class='highlight' style='background-color: #00A0F0; padding: 0vh 0vw 0vh 0vw; zIndex: 0'>Student</span>s from Stanford University Medical School an<span class='highlight' style='background-color: #D3365A; padding: 1vh 0vw 1vh 0vw; zIndex: 1'>nounced Monday the invention of a new diag<span class='highlight' style='background-color: #59c00aba; padding: 2vh 0vw 2vh 0vw; zIndex: 2'>nostic tool tha</span></span>t can sort cells by type of small printed chip</span>"
     // "<span><span id='highlight-0' class='highlight' onMouseMove={handleMouseMove(event)} onMouseLeave={handleMouseLeave(event)} onMouseEnter={handleMouseEnter(event)} style='background-color: #00A0F0; padding: 0vh 0vw 0vh 0vw; zIndex: 0'>Student</span>s from Stanford University Medical School an<span id='highlight-1' class='highlight' onMouseMove={handleMouseMove(event)} onMouseLeave={handleMouseLeave(event)} onMouseEnter={handleMouseEnter(event)} style='background-color: #D3365A; padding: 1vh 0vw 1vh 0vw; zIndex: 1'>nounced Monday the invention of a new diag<span id='highlight-2' class='highlight' onMouseMove={handleMouseMove(event)} onMouseLeave={handleMouseLeave(event)} onMouseEnter={handleMouseEnter(event)} style='background-color: #59c00aba; padding: 2vh 0vw 2vh 0vw; zIndex: 2'>nostic tool tha</span></span>t can sort cells by type of small printed chip</span>"
     // "<span><span id='highlight-0' class='highlight' onMouseMove={handleMouseMove(event)} onMouseLeave={handleMouseLeave(event)} onMouseEnter={handleMouseEnter(event)} style='background-color: #FF5733; padding: 0vh 0vw 0vh 0vw; zIndex: 0'>Students from Stanfo</span>rd University Medical School announced Monday the invention of a new diagnostic tool that can sort cells by type of small printed chip</span>"
-    ""
+    "<span class='machine--translation'; contentEditable= 'true'; onblur='handleBlur(event, 0)';>因为他们不想看到你<span class='highlight' id='highlight-0' style='background-color: #800080; padding: 0vh 0vw 0vh 0vw; zIndex: 0'; contentEditable= 'true'; onblur='handleBlur(event, 0)';>赢得比赛</span>.</span>"
   );
   // const spans: { errors: Error[] }[] = [
   //   {
@@ -106,7 +106,20 @@ const App: React.FC = () => {
     Hallucinations: "#800080", // Purple
   };
 
-  const [highlightedError, setHighlightedError] = useState<any | null>(null);
+  // const [highlightedError, setHighlightedError] = useState<any | null>(null);
+
+  const [highlightedError, setHighlightedError] = useState<any>([
+    {
+      original_text: "赢得比赛",
+      translated_text: "win the game",
+      correct_text: "win the match",
+      start_index_orig: 9,
+      end_index_orig: 13,
+      start_index_translation: 9,
+      end_index_translation: 13,
+      error_type: "Hallucinations",
+    },
+  ]);
 
   const [sourceTextInput, setSourceTextInput] = useState(
     // "Kuwa mbere, abahanga ba siyansi bo mu Ishuri rikuru ry’ubuvuzi rya kaminuza ya Stanford bataganje ko havumbuwe igikoresho gishya cyo gusuzuma gishobora gutandukanya ingirabuzima"
@@ -394,6 +407,19 @@ const App: React.FC = () => {
 
         <hr className="divider" />
         <h2 className="source-text-title">Translation Text</h2>
+
+        <div
+          className="highlight-container"
+          ref={errorHighlightContainerRef}
+          // onMouseMove={handleMouseMove}
+          // onMouseLeave={handleMouseLeave}
+          // onMouseEnter={handleMouseEnter}
+          dangerouslySetInnerHTML={{ __html: sanitizedHtmlString }}
+        />
+
+        {/*  */}
+        <hr className="divider" />
+        <h2 className="source-text-title">Post Edits</h2>
 
         <div
           className="highlight-container"
