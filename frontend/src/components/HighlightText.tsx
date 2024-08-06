@@ -27,6 +27,7 @@ interface HighlightTextProps {
     highlight: HighlightedError
   ) => void;
   onMouseDown?: () => void;
+  selectedSpan?: string | null;
 }
 
 // **HighlightText Component**
@@ -38,6 +39,7 @@ const HighlightText: React.FC<HighlightTextProps> = ({
   onMouseLeave,
   onMouseMove,
   onMouseDown,
+  selectedSpan,
 }) => {
   // **Functions**
 
@@ -98,10 +100,13 @@ const HighlightText: React.FC<HighlightTextProps> = ({
       }
 
       //   Append Nested JSX Elements to elements array
+      // console.log("Selected Span", selectedSpan);
       elements.push(
         <span
           key={`highlight-${index}`}
-          className="highlight"
+          className={`highlight ${
+            selectedSpan === error_type ? "highlight-selected" : ""
+          }`}
           style={{ backgroundColor: colorMappings[error_type] }}
           onMouseEnter={(e) =>
             onMouseEnter && onMouseEnter(e, highlights[index])

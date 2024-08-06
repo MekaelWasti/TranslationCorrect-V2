@@ -290,6 +290,10 @@ li {
   /* background-color: #2a6df4; */
 }
 
+.highlight-selected {
+  outline: white solid 2px;
+}
+
 .txt {
   display: flex;
   position: relative;
@@ -421,7 +425,7 @@ li {
   border: none;
   color: white;
   font-size: 1rem;
-  font-weight: 500;
+  font-weight: 600;
   cursor: pointer;
 }
 
@@ -552,14 +556,95 @@ li {
   border: 1px solid #262626;
 }
 
-/* Edit Context Section */
+/* Post-Edit Section */
 
-.edit-context {
+.post-edit-section {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
+  /* justify-content: center; */
+
+  /* justify-content: space-evenly; */
 
   /* justify-content: center; */
   /* width: 100%; */
+}
+
+.post-edit-additions {
+  color: greenyellow;
+  text-decoration: underline;
+}
+
+.post-edit-deletions {
+  color: rgb(255, 34, 0);
+  text-decoration: line-through;
+}
+
+.post-edit-section > h3 {
+  flex-basis: 20%;
+}
+
+.post-edit-section > .insert-span-button {
+  margin-top: 0vh;
+  margin-bottom: 0vh;
+  margin-left: auto;
+  /* margin-right: auto; */
+}
+
+.post-edit-section > .insert-span-button-active {
+  background-color: white;
+  color: black;
+}
+
+.custom-correction-button:hover,
+.insert-span-button:hover {
+  /* background-color: #1e1e1e; */
+  /* color: rgb(200, 200, 200); */
+
+  background-color: #333333;
+  color: rgb(255, 255, 255);
+}
+
+.custom-correction-button-active:hover,
+.insert-span-button-active:hover {
+  /* background-color: #d8d8d8; */
+  /* color: rgb(35, 35, 35); */
+
+  background-color: #dddddd;
+  color: rgb(0, 0, 0);
+}
+
+/* .custom-correction-button:active,
+.insert-span-button:active {
+  background-color: #1e1e1e;
+} */
+
+.post-edit-section > .custom-correction-button {
+  margin: 0vh 0vw 0vh 0vw;
+}
+
+.post-edit-section > .custom-correction-button:focus {
+  background-color: white;
+  color: black;
+}
+
+.post-edit-translation-field {
+  flex-basis: 100%;
+  font-size: medium;
+  width: 100%;
+  height: 20vh;
+  background-color: #1a1a1a;
+  border-radius: 8px;
+  border: #333333 solid 1.7px;
+  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  resize: none;
+  overflow: hidden;
+  padding: 1.5vh 1.5vw 1.5vh 1.5vw;
+  margin: 2vh 0vw 0vh 0vw;
+}
+
+.post-edit-translation-field:focus {
+  outline: none;
 }
 
 .custom-correction-button,
@@ -575,22 +660,35 @@ li {
   cursor: pointer;
 }
 
-.custom-correction-button:hover,
-.insert-span-button:hover {
-  background-color: #373737;
-}
+/* Scoring Slider Section */
 
-.custom-correction-button:active,
-.insert-span-button:active {
-  background-color: #1e1e1e;
+.scoring-section {
+  display: flex;
+  justify-content: space-between;
 }
 
 .slider-section {
   display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-evenly;
+  flex-wrap: wrap;
+}
+
+.slider-section > h4 {
+  padding: 0 0 0 0;
+  margin: 0 0 0 0;
+  font-size: 0.9rem;
+}
+
+.slider-section > .score-display {
+  flex-basis: 100%;
+  justify-content: center;
+  align-items: center;
 }
 
 .slider-section > .span-slider {
-  width: 40%;
+  width: 70%;
 }
 
 .span-slider {
@@ -622,7 +720,6 @@ li {
   cursor: pointer; /* Cursor on hover */
 }
 
-/* Scoring Slider Section */
-
-.scoring-slider-section {
+.body {
+  padding: 0 10vw 0 10vw;
 }
