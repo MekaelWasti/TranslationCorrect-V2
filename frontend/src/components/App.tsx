@@ -12,19 +12,16 @@ import "../index.css";
 const App: React.FC = () => {
   // **States**
 
-  // Placeholder Sentences
   const referenceTranslation =
     "斯坦福大学医学院的学生周一宣布发明了一种新的诊断工具，可以按微型印刷芯片的形式对细胞进行分类.";
-  // const machineTranslation = "Cause they don't want to see you win dawg";
+
   const machineTranslation =
     "Students from Stanford University Medical School announced Monday the invention of a new diagnostic tool that can sort cells by type, in the form of a miniature printed chip";
 
-  // Post-Edit Section
   const [postEditTranslation, setPostEditTranslation] =
     useState(machineTranslation);
 
   const [insertSpanActive, setInsertSpanActive] = useState(false);
-
   const [currentText, setCurrentText] = useState(machineTranslation);
   const [diffText, setDiffText] = useState("");
   const editableDivRef = useRef<HTMLDivElement>(null);
@@ -34,7 +31,6 @@ const App: React.FC = () => {
     setCurrentText(machineTranslation);
   }, [machineTranslation]);
 
-  // Highlighted Span State
   const [hoveredHighlight, setHoveredHighlight] =
     useState<HighlightedError | null>();
 
@@ -56,7 +52,6 @@ const App: React.FC = () => {
     y: number;
   } | null>(null);
 
-  // Placeholder Highlight Errors
   const [highlightedError, setHighlightedError] = useState<HighlightedError[]>([
     {
       original_text: "赢得比赛",
@@ -80,18 +75,19 @@ const App: React.FC = () => {
     },
   ]);
 
+  // Scoring States
+  const [spanScores, setSpanScores] = useState<{ [key: string]: number }>({});
+  const [overallScore, setOverallScore] = useState<number>(50);
+
   // **Event Handlers**
+
   const handleMouseEnterSpan = (
     e: React.MouseEvent<HTMLSpanElement>,
     highlight: HighlightedError
   ) => {
-    console.log("Mouse Enter", e.currentTarget);
-    console.log("Mouse Entered on higlight", highlight);
-
     if (!spanDropdown) {
       setHoveredHighlight(highlight);
     }
-    // setMousePosition({ x: e.clientX, y: e.clientY });
 
     const rect = e.currentTarget.getBoundingClientRect();
     setSpanPosition({
@@ -108,7 +104,6 @@ const App: React.FC = () => {
     setTooltipStyle({
       top: e.pageY + 25,
       left: e.pageX - 125,
-      // display: "block",
     });
   };
 
@@ -116,7 +111,6 @@ const App: React.FC = () => {
     e: React.MouseEvent<HTMLSpanElement>,
     highlight: HighlightedError
   ) => {
-    console.log("Mouse Leave", e.currentTarget);
     setHoveredHighlight(null);
   };
 
@@ -127,18 +121,11 @@ const App: React.FC = () => {
     setSpanDropdown(!spanDropdown);
     setHoveredHighlight(null);
     setSelectedSpan(highlight.error_type);
-    console.log(spanDropdown);
   };
-
-  // Post-Edit Area Handlers
 
   const handlePostEditTyping = (e: ChangeEvent<HTMLTextAreaElement>) => {
     setPostEditTranslation(e.target.value);
   };
-
-  {
-    /* TODO: Currently Doing */
-  }
 
   const applyHighlight = () => {
     const selection = window.getSelection();
@@ -148,19 +135,12 @@ const App: React.FC = () => {
     const start = range.startOffset;
     const end = range.endOffset;
 
-    // Assuming `selectedSpan` and `colorMappings` are available in the scope
     const span = document.createElement("span");
     span.className = `highlight ${selectedSpan ? "highlight-selected" : ""}`;
     span.style.backgroundColor = Object.values(colorMappings)[0];
 
-    // Set up event handlers if needed
     span.onmouseenter = (e) =>
       handleMouseEnterSpan && handleMouseEnterSpan(e, highlightedError[0]);
-    // span.onmouseleave = (e) =>
-    //   handleMouseLeaveSpan && handleMouseLeaveSpan(e, highlightedError[0]);
-    // span.onmousemove = (e) => handleMouseMove && handleMouseMove(e);
-    // span.onmousedown = (e) =>
-    //   handleMouseClick && handleMouseClick(e, highlightedError[0]);
 
     range.surroundContents(span);
   };
@@ -194,6 +174,14 @@ const App: React.FC = () => {
     setInsertSpanActive(!insertSpanActive);
   };
 
+  const handleSpanScoreChange = (index: string, score: number) => {
+    setSpanScores((prevScores) => ({ ...prevScores, [index]: score }));
+  };
+
+  const handleOverallScoreChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setOverallScore(Number(e.target.value));
+  };
+
   // **JSX**
   return (
     <div className="body">
@@ -214,7 +202,6 @@ const App: React.FC = () => {
       </div>
       <br />
       <br />
-      {/* Machine Translation */}
       <h3>Machine Translation</h3>
       <div>
         <HighlightText
@@ -228,23 +215,10 @@ const App: React.FC = () => {
           selectedSpan={selectedSpan}
         />
       </div>
-      {/* Highlight Tooltip */}
-      {/* {hoveredHighlight && ( */}
+
       {hoveredHighlight && mousePosition && (
-        <div
-          className="error-tooltip"
-          style={tooltipStyle}
-          // style={{
-          // position: "absolute",
-          // left: mousePosition.x - 100, // Add offset to avoid cursor overlap
-          // top: mousePosition.y + 20, // Add offset to avoid cursor overlap
-          // }}
-        >
-          <p
-            style={{
-              color: colorMappings[hoveredHighlight.error_type],
-            }}
-          >
+        <div className="error-tooltip" style={tooltipStyle}>
+          <p style={{ color: colorMappings[hoveredHighlight.error_type] }}>
             <strong>Error Type:</strong> {hoveredHighlight.error_type}
           </p>
           <p>
@@ -258,7 +232,7 @@ const App: React.FC = () => {
           </p>
         </div>
       )}
-      {/* Highlight Tooltip */}
+
       <div className="divider"></div>
       <div className="post-edit-section">
         <h3>Post-Editing</h3>
@@ -266,7 +240,6 @@ const App: React.FC = () => {
           className={`insert-span-button ${
             insertSpanActive ? "insert-span-button-active" : ""
           }`}
-          // onMouseDown={handleInsertSpan}
           onClick={applyHighlight}
         >
           Insert Span
@@ -275,42 +248,33 @@ const App: React.FC = () => {
 
         <div
           className="post-edit-translation-field"
-          // value={postEditTranslation}
-          // onInput={handlePostEditTyping}
           ref={editableDivRef}
           onInput={handleInput}
-          // name="post-edit-translation"
-          id="post-edit-translation"
-          // placeholder="Edit Translation"
           contentEditable={true}
           suppressContentEditableWarning={true}
         >
-          {
-            <HighlightText
-              text={machineTranslation}
-              highlights={highlightedError}
-              highlightKey="end_index_translation"
-              onMouseEnter={handleMouseEnterSpan}
-              onMouseLeave={handleMouseLeaveSpan}
-              onMouseMove={handleMouseMove}
-              onMouseDown={handleMouseClick}
-              selectedSpan={selectedSpan}
-            />
-          }
+          <HighlightText
+            text={machineTranslation}
+            highlights={highlightedError}
+            highlightKey="end_index_translation"
+            onMouseEnter={handleMouseEnterSpan}
+            onMouseLeave={handleMouseLeaveSpan}
+            onMouseMove={handleMouseMove}
+            onMouseDown={handleMouseClick}
+            selectedSpan={selectedSpan}
+          />
         </div>
-        {/* <button onClick={applyHighlight}>Highlight Selection</button> */}
       </div>
 
       <div className="changes" dangerouslySetInnerHTML={{ __html: diffText }} />
 
-      {/* Span Dropdown */}
       {spanDropdown && mousePosition && (
         <div
           className="span-dropdown"
           style={{
             position: "absolute",
             left: spanPosition.left - 20,
-            top: spanPosition.top + 25, // Add offset to place it below the span
+            top: spanPosition.top + 25,
           }}
         >
           <ul>
@@ -331,39 +295,60 @@ const App: React.FC = () => {
         </div>
       )}
 
-      {/* TODO: Currently Doing */}
-      {/* Scoring Slider */}
+      {/* Scoring Section */}
 
-      {/* Span Scoring Slider */}
       <div className="scoring-section">
-        <div className="span-score-section">
-          <h3>{selectedSpan} Span Score</h3>
-          <div className="slider-section">
-            <h4>0</h4>
-            <input className="span-slider" type="range" />
-            <h4>1</h4>
-          </div>
-        </div>
-        <div className="overall-score-section"></div>
+  <div className="span-score-section">
+    <h3>{selectedSpan} Span Score</h3>
+    <div className="slider-section">
+      <h4>0</h4>
+      <input
+        className="span-slider"
+        type="range"
+        min="0"
+        max="100"
+        value={spanScores[selectedSpan] || 50}
+        onChange={(e) =>
+          handleSpanScoreChange(selectedSpan, Number(e.target.value))
+        }
+      />
+      <h4>100</h4>
+    </div>
+    <p>Score: {spanScores[selectedSpan] || 50}</p>
+  </div>
 
-        <div className="divider"></div>
+  <div className="divider"></div>
 
-        {/* Overall Translation Scoring Slider */}
-        <div className="scoring-slider-section">
-          <div className="span-score-section">
-            <h3>{selectedSpan} Span Score</h3>
-            <div className="slider-section">
-              <h4>0</h4>
-              <input className="span-slider" type="range" />
-              <h4>1</h4>
-              <h4 className="score-display">1</h4>
-            </div>
-          </div>
-          <div className="overall-score-section"></div>
-        </div>
+  <div className="overall-score-section">
+    <h3>Overall Translation Score</h3>
+    <div className="slider-section">
+      <h4>0</h4>
+      <input
+        className="span-slider"
+        type="range"
+        min="0"
+        max="100"
+        value={overallScore}
+        onChange={handleOverallScoreChange}
+      />
+      <h4>100</h4>
+    </div>
+    <p>Score: {(overallScore)}</p>
+  </div>
+</div>
+
+
+
+      {/* Displaying All Span Scores */}
+      <div className="span-scores-display">
+        <h3>All Span Scores</h3>
+        {Object.entries(spanScores).map(([index, score]) => (
+          <p key={index}>
+            Span {index}: {score}
+          </p>
+        ))}
       </div>
 
-      {/* Accept Translation Section */}
       <div className="accept-translation-section">
         <button>Submit Annotation</button>
       </div>
@@ -376,3 +361,4 @@ const App: React.FC = () => {
 };
 
 export default App;
+
