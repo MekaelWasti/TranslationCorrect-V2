@@ -264,7 +264,8 @@ li {
   margin-bottom: 5vh;
   border: 1px solid #262626;
 }
-
+  
+  
 .error-highlighting-section {
   text-align: left;
   /* margin: 0 0 0 12vh; */
@@ -665,6 +666,18 @@ li {
 .scoring-section {
   display: flex;
   justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 20px;
+  padding: 20px;
+}
+
+.span-score-section,
+.overall-score-section {
+  flex: 1;
+  max-width: 48%;
+  text-align: center;
+  color: #fff; /* Text color for contrast */
 }
 
 .slider-section {
@@ -673,8 +686,13 @@ li {
   align-items: center;
   justify-content: space-evenly;
   flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 10px;
+
 }
 
+  
+  
 .slider-section > h4 {
   padding: 0 0 0 0;
   margin: 0 0 0 0;
@@ -692,6 +710,7 @@ li {
 }
 
 .span-slider {
+  flex-grow: 1;
   cursor: pointer;
   -webkit-appearance: none; /* Override default CSS styles */
   appearance: none;
@@ -710,6 +729,7 @@ li {
   transition: opacity 0.2s;
 }
 
+
 .span-slider::-webkit-slider-thumb {
   -webkit-appearance: none; /* Override default look */
   appearance: none;
@@ -719,6 +739,28 @@ li {
   border-radius: 50%; /* Rounded thumb */
   cursor: pointer; /* Cursor on hover */
 }
+
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .scoring-section {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .span-score-section,
+  .overall-score-section {
+    max-width: 100%;
+  }
+
+  .divider {
+    width: 100%;
+    height: 1px;
+    margin: 20px 0;
+  }
+}
+
+
 
 .body {
   padding: 0 10vw 0 10vw;
