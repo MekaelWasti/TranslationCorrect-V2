@@ -36,7 +36,20 @@ now do
 ```jsx
 pip install -r requirements.txt
 ```
+**Important**: Please ensure pip is updated to the latest version using the following command
 
+```
+python.exe -m pip install --upgrade pip
+```
+
+Next, run the following commands to install these specific dependencies to avoid running into issues
+```
+pip install fastapi
+pip install transformers
+pip install unbabel-comet
+pip install python-dotenv
+pip install openai
+```
 It should install without collisions, if it doesn’t then fix it, ask me if you need to
 
 ### To run Backend
