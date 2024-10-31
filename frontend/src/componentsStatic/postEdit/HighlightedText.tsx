@@ -32,6 +32,7 @@ const HighlightedText: React.FC<HighlightTextProps> = ({
     x: number;
     y: number;
   } | null>(null);
+  const [errTypeEdit, setErrTypeEdit] = useState<{ [key: number]: string }>({});
 
   const [tooltipStyle, setTooltipStyle] = useState({
     top: 0,
@@ -81,6 +82,12 @@ const HighlightedText: React.FC<HighlightTextProps> = ({
     setSelectedSpanIdx(highlightIdx);
   };
 
+  const handleTypeSelect = (type: string) => {
+    setErrTypeEdit((prevEdits) => ({ ...prevEdits, [selectedSpanIdx!]: type }));
+    setSpanDropdown(!spanDropdown);
+    // TODO: Add the edit state to SpanEvalprovider
+  };
+
   // Dynamic Highlghting Function
   const getHighlightedText = (
     text: string,
@@ -122,15 +129,14 @@ const HighlightedText: React.FC<HighlightTextProps> = ({
               ? "highlight-selected"
               : ""
           }`}
-          style={{ backgroundColor: colorMappings[error_type] }}
-          onMouseEnter={(e) =>
-            handleMouseEnterSpan && handleMouseEnterSpan(e, highlights[index])
-          }
-          onMouseLeave={() => handleMouseLeaveSpan && handleMouseLeaveSpan()}
-          onMouseMove={(e) => handleMouseMove && handleMouseMove(e)}
-          onMouseDown={() =>
-            disableEdit ? () => {} : handleMouseClick && handleMouseClick(index)
-          }
+          style={{
+            backgroundColor:
+              colorMappings[errTypeEdit[index]] ?? colorMappings[error_type],
+          }}
+          onMouseEnter={(e) => handleMouseEnterSpan(e, highlights[index])}
+          onMouseLeave={() => handleMouseLeaveSpan()}
+          onMouseMove={(e) => handleMouseMove(e)}
+          onMouseDown={() => (disableEdit ? () => {} : handleMouseClick(index))}
         >
           {text.substring(start, end)}
         </span>
@@ -176,10 +182,16 @@ const HighlightedText: React.FC<HighlightTextProps> = ({
           }}
         >
           <ul>
-            {Object.keys(colorMappings).map((key) => (
+            {Object.keys(colorMappings).map((errorType) => (
               <div className="dropdown-selection">
-                <li key={key}>
-                  <p>{key}</p>
+                <li
+                  key={errorType}
+                  style={{
+                    "--hover-color": colorMappings[errorType],
+                  }}
+                  onClick={() => handleTypeSelect(errorType)}
+                >
+                  <p>{errorType}</p>
                 </li>
                 <hr className="dropdown-divider" />
               </div>
