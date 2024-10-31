@@ -8,7 +8,7 @@ import {
 } from "react";
 
 // Provides context to components responsible for evaluating / editing translations.
-// Currently only stores selected span index. Down the road, the provider can be used to track all evaluation/edit status.
+// Currently only stores selected span index and span scores. Down the road, the provider can be used to track all evaluation/edit status.
 
 type SpanEvalContextType = {
   selectedSpanIdx: number | undefined;

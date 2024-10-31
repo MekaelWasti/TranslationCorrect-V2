@@ -4,8 +4,6 @@ import "../../index.css";
 import { mergeRanges } from "../../util/mergeRanges";
 import { useSpanEvalContext } from "../SpanEvalProvider";
 
-// **Interfaces**
-
 // HighlightTextProps Interface
 type HighlightTextProps = {
   text: string;

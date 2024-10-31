@@ -7,8 +7,6 @@ import { PostEditContainer } from "./postEdit/PostEditContainer";
 import { ScoringContainer } from "./scoring/ScoringContainer";
 
 const App: React.FC = () => {
-  // **States**
-
   const referenceTranslation =
     "斯坦福大学医学院的学生周一宣布发明了一种新的诊断工具，可以按微型印刷芯片的形式对细胞进行分类.";
 
