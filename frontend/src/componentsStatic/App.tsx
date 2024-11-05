@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import "../index.css";
 import { HighlightedError } from "../types";
 import { SpanEvalProvider } from "./SpanEvalProvider";
@@ -10,8 +10,23 @@ const App: React.FC = () => {
   const referenceTranslation =
     "斯坦福大学医学院的学生周一宣布发明了一种新的诊断工具，可以按微型印刷芯片的形式对细胞进行分类.";
 
-  const machineTranslation =
-    "Students from Stanford University Medical School announced Monday the invention of a new diagnostic tool that can sort cells by type, in the form of a miniature printed chip";
+  const [machineTranslation, setMachineTranslation] = useState<string>(
+    "Students from Stanford University Medical School announced Monday the invention of a new diagnostic tool that can sort cells by type, in the form of a miniature printed chip"
+  );
+
+  // Keep track of difftext changes in post edit custom edits by user
+  const [highlightedContent, setHighlightedContent] = useState<
+    JSX.Element | String
+  >(
+    "Students from Stanford University Medical School announced Monday the invention of a new diagnostic tool that can sort cells by type, in the form of a miniature printed chip"
+  );
+
+  const [diffContent, setDiffContent] =
+    useState<React.ReactNode>(highlightedContent);
+
+  const handleDiffTextUpdate = (parsedDiff: React.ReactNode) => {
+    setDiffContent(parsedDiff);
+  };
 
   const highlightedError: HighlightedError[] = [
     {
@@ -67,17 +82,22 @@ const App: React.FC = () => {
         <br />
         <h3>Machine Translation</h3>
         <div>
-          <HighlightedText
-            text={machineTranslation}
-            highlights={highlightedError}
-            highlightKey="end_index_translation"
-            disableEdit={true}
-          />
+          <div className="machine-translation-output">
+            {diffContent && (
+              <HighlightedText
+                text={diffContent}
+                highlights={highlightedError}
+                highlightKey="end_index_translation"
+                disableEdit={true}
+              />
+            )}
+          </div>
         </div>
         <div className="divider"></div>
         <PostEditContainer
           machineTranslation={machineTranslation}
           highlightedError={highlightedError}
+          onDiffTextUpdate={handleDiffTextUpdate}
         />
 
         {/* Scoring Section */}

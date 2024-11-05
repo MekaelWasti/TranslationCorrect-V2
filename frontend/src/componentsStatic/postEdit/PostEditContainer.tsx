@@ -12,12 +12,14 @@ import {
 type PostEditContainerProps = {
   machineTranslation: string;
   highlightedError: HighlightedError[];
+  onDiffTextUpdate: (newDiffText: string) => void;
 };
 
 // **PostEditContainer Component**
 export const PostEditContainer: React.FC<PostEditContainerProps> = ({
   machineTranslation,
   highlightedError,
+  onDiffTextUpdate,
 }) => {
   const [insertSpanActive, setInsertSpanActive] = useState(false);
   const [diffText, setDiffText] = useState("");
@@ -53,19 +55,32 @@ export const PostEditContainer: React.FC<PostEditContainerProps> = ({
     const diffs = dmp.diff_main(original, modified);
     dmp.diff_cleanupSemantic(diffs);
 
-    let result = "";
-
-    diffs.forEach(([type, text]) => {
+    // Convert diffs into React elements
+    const diffElements = diffs.map(([type, text], index) => {
       if (type === DIFF_INSERT) {
-        result += `<span class="post-edit-additions">${text}</span>`;
+        return (
+          <span className="post-edit-additions" key={`diff-${index}`}>
+            {text}
+          </span>
+        );
       } else if (type === DIFF_DELETE) {
-        result += `<span class="post-edit-deletions">${text}</span>`;
-      } else if (type === DIFF_EQUAL) {
-        result += text;
+        return (
+          <span className="post-edit-deletions" key={`diff-${index}`}>
+            {text}
+          </span>
+        );
+      } else {
+        // For equal text, return as is
+        return text;
       }
     });
 
-    setDiffText(result);
+    // Convert array of elements to a single React element
+    const diffContent = <>{diffElements}</>;
+
+    // Update state and pass the diffContent to parent component
+    setDiffText(diffContent);
+    onDiffTextUpdate(diffContent);
   };
 
   //   Return JSX
@@ -97,8 +112,6 @@ export const PostEditContainer: React.FC<PostEditContainerProps> = ({
           />
         </div>
       </div>
-
-      <div className="changes" dangerouslySetInnerHTML={{ __html: diffText }} />
     </div>
   );
 };
