@@ -1,18 +1,14 @@
-import React, { useRef, useState } from "react";
+import { DIFF_DELETE, DIFF_INSERT, diff_match_patch } from "diff-match-patch";
+import React, { useRef } from "react";
 import "../../index.css";
+import { HighlightedError } from "../../types";
+import { useSpanEvalContext } from "../SpanEvalProvider";
 import HighlightedText from "./HighlightedText";
-import { colorMappings, HighlightedError } from "../../types";
-import {
-  DIFF_DELETE,
-  DIFF_EQUAL,
-  DIFF_INSERT,
-  diff_match_patch,
-} from "diff-match-patch";
 
 type PostEditContainerProps = {
   machineTranslation: string;
   highlightedError: HighlightedError[];
-  onDiffTextUpdate: (newDiffText: string) => void;
+  onDiffTextUpdate: (newDiffText: React.ReactNode) => void;
 };
 
 // **PostEditContainer Component**
@@ -21,27 +17,20 @@ export const PostEditContainer: React.FC<PostEditContainerProps> = ({
   highlightedError,
   onDiffTextUpdate,
 }) => {
-  const [insertSpanActive, setInsertSpanActive] = useState(false);
-  const [diffText, setDiffText] = useState("");
-
   const editableDivRef = useRef<HTMLDivElement>(null);
+  const { translatedText, addNewErrorSpan } = useSpanEvalContext();
 
   const applyHighlight = () => {
     const selection = window.getSelection();
     if (!selection?.rangeCount) return;
 
-    const range = selection.getRangeAt(0);
-    const start = range.startOffset;
-    const end = range.endOffset;
-
-    const span = document.createElement("span");
-    // span.className = `highlight ${selectedSpan ? "highlight-selected" : ""}`;
-    span.style.backgroundColor = Object.values(colorMappings)[0];
-
-    // span.onmouseenter = (e) =>
-    //   handleMouseEnterSpan && handleMouseEnterSpan(e, highlightedError[0]);
-
-    range.surroundContents(span);
+    // TODO: fix string index bug
+    const start = String(translatedText).indexOf(selection.toString());
+    addNewErrorSpan(
+      start,
+      start + selection.toString().length,
+      "Addition of Text"
+    );
   };
 
   const handleInput = () => {
@@ -79,7 +68,6 @@ export const PostEditContainer: React.FC<PostEditContainerProps> = ({
     const diffContent = <>{diffElements}</>;
 
     // Update state and pass the diffContent to parent component
-    setDiffText(diffContent);
     onDiffTextUpdate(diffContent);
   };
 
@@ -88,12 +76,7 @@ export const PostEditContainer: React.FC<PostEditContainerProps> = ({
     <div>
       <div className="post-edit-section">
         <h3>Post-Editing</h3>
-        <button
-          className={`insert-span-button ${
-            insertSpanActive ? "insert-span-button-active" : ""
-          }`}
-          onClick={applyHighlight}
-        >
+        <button className={`insert-span-button`} onClick={applyHighlight}>
           Insert Span
         </button>
         <button className="custom-correction-button">Custom Correction</button>

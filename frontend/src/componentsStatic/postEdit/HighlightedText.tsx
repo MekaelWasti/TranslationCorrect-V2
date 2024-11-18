@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, ReactElement } from "react";
 import { HighlightedError, colorMappings } from "../../types";
 import "../../index.css";
 import { useSpanEvalContext } from "../SpanEvalProvider";
@@ -21,7 +21,12 @@ const HighlightedText: React.FC<HighlightTextProps> = ({
   highlightKey,
   disableEdit = false,
 }) => {
-  const { selectedSpanIdx, setSelectedSpanIdx } = useSpanEvalContext();
+  const {
+    selectedSpanIdx,
+    setSelectedSpanIdx,
+    updateSpanErrorType,
+    errorSpans,
+  } = useSpanEvalContext();
   const dropdownRef = useRef(null);
 
   const [selectedSpan, setSelectedSpan] = useState("");
@@ -30,7 +35,6 @@ const HighlightedText: React.FC<HighlightTextProps> = ({
     x: number;
     y: number;
   } | null>(null);
-  const [errTypeEdit, setErrTypeEdit] = useState<{ [key: number]: string }>({});
 
   const [tooltipStyle, setTooltipStyle] = useState({ top: 0, left: 0 });
   const [spanPosition, setSpanPosition] = useState<{
@@ -99,7 +103,7 @@ const HighlightedText: React.FC<HighlightTextProps> = ({
   };
 
   useEffect(() => {
-    const handleClickOutsideDropDown = (event) => {
+    const handleClickOutsideDropDown = (event: MouseEvent) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
         setSpanDropdown(false);
       }
@@ -113,11 +117,21 @@ const HighlightedText: React.FC<HighlightTextProps> = ({
   }, [spanDropdown]);
 
   const handleTypeSelect = (type: string) => {
-    setErrTypeEdit((prevEdits) => ({ ...prevEdits, [selectedSpanIdx!]: type }));
+    updateSpanErrorType(selectedSpanIdx!, type);
+    console.log(errorSpans);
+
     setSpanDropdown(false);
-    // TODO: Update SpanEvalProvider with the new error type
   };
 
+  console.log(highlights);
+
+  interface Range {
+    start: number;
+    end: number;
+    error_type: string;
+    highlight: HighlightedError;
+    index: number;
+  }
   // Prepare ranges with indices
   const ranges = highlights.map((highlight, idx) => {
     const startKey = highlightKey.includes("end")
@@ -129,11 +143,15 @@ const HighlightedText: React.FC<HighlightTextProps> = ({
       error_type: highlight.error_type,
       highlight,
       index: idx, // Track highlight index
-    };
+    } as Range;
   });
 
-  const getHighlightedText = (nodes, highlights, currentIndex = 0) => {
-    let elements = [];
+  const getHighlightedText = (
+    nodes: React.ReactNode[],
+    highlights: Range[],
+    currentIndex = 0
+  ) => {
+    const elements: (string | ReactElement)[] = [];
     let localIndex = currentIndex;
 
     nodes.forEach((node, idx) => {
@@ -176,9 +194,7 @@ const HighlightedText: React.FC<HighlightTextProps> = ({
                       : ""
                   }`}
                   style={{
-                    backgroundColor:
-                      colorMappings[errTypeEdit[h.index]] ??
-                      colorMappings[h.error_type],
+                    backgroundColor: colorMappings[h.error_type],
                   }}
                   onMouseEnter={(e) => handleMouseEnterSpan(e, h.highlight)}
                   onMouseLeave={handleMouseLeaveSpan}
@@ -251,8 +267,8 @@ const HighlightedText: React.FC<HighlightTextProps> = ({
           className="span-dropdown"
           style={{
             position: "absolute",
-            left: spanPosition.left - 20,
-            top: spanPosition.top + 25,
+            left: spanPosition!.left - 20,
+            top: spanPosition!.top + 25,
           }}
         >
           <ul>
