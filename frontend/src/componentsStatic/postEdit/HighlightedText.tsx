@@ -31,6 +31,7 @@ const HighlightedText: React.FC<HighlightTextProps> = ({
 
   const [selectedSpan, setSelectedSpan] = useState("");
   const [spanDropdown, setSpanDropdown] = useState(false);
+  const highlightedSpanRef = useRef<HTMLSpanElement | null>(null);
   const [mousePosition, setMousePosition] = useState<{
     x: number;
     y: number;
@@ -57,6 +58,7 @@ const HighlightedText: React.FC<HighlightTextProps> = ({
       top: rect.top + window.scrollY,
       left: rect.left + window.scrollX,
     });
+    highlightedSpanRef.current = e.currentTarget; // Save the span reference
   };
 
   const handleMouseMove = (e: React.MouseEvent<HTMLSpanElement>) => {
@@ -91,11 +93,13 @@ const HighlightedText: React.FC<HighlightTextProps> = ({
       setSpanDropdown(true);
       setHoveredHighlight(highlight);
 
-      const rect = e.currentTarget.getBoundingClientRect();
-      setSpanPosition({
-        top: rect.top + window.scrollY,
-        left: rect.left + window.scrollX,
-      });
+      if (highlightedSpanRef.current) {
+        const rect = highlightedSpanRef.current.getBoundingClientRect();
+        setSpanPosition({
+          top: rect.top + window.scrollY,
+          left: rect.left + window.scrollX,
+        });
+      }
     }
     setHoveredHighlight(null);
     setSelectedSpanIdx(highlightIdx);
@@ -188,6 +192,11 @@ const HighlightedText: React.FC<HighlightTextProps> = ({
               fragments.push(
                 <span
                   key={`highlight-${nodeStartIndex + highlightStart}`}
+                  ref={
+                    selectedSpanIdx === nodeStartIndex
+                      ? highlightedSpanRef
+                      : null
+                  }
                   className={`highlight ${
                     selectedSpanIdx === h.index && !disableEdit
                       ? "highlight-selected"
@@ -239,6 +248,28 @@ const HighlightedText: React.FC<HighlightTextProps> = ({
 
     return { elements, currentIndex: localIndex };
   };
+
+  const handleResize = () => {
+    if (highlightedSpanRef.current) {
+      const rect = highlightedSpanRef.current.getBoundingClientRect();
+      setSpanPosition({
+        top: rect.top + window.scrollY,
+        left: rect.left + window.scrollX,
+      });
+    }
+  };
+
+  useEffect(() => {
+    const debouncedHandleResize = () => {
+      window.requestAnimationFrame(handleResize);
+    };
+
+    window.addEventListener("resize", debouncedHandleResize);
+
+    return () => {
+      window.removeEventListener("resize", debouncedHandleResize);
+    };
+  }, []);
 
   const { elements } = getHighlightedText(React.Children.toArray(text), ranges);
 
