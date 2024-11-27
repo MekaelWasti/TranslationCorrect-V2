@@ -29,11 +29,13 @@ type SpanEvalContextType = {
   selectedSpanIdx: number | undefined;
   setSelectedSpanIdx: Dispatch<SetStateAction<number | undefined>>;
   diffContent: React.ReactNode;
+  setEdits: Dispatch<SetStateAction<[]>>;
   setDiffContent: Dispatch<SetStateAction<React.ReactNode>>;
   spanScores: { [key: number]: number };
-  setSpanScores:
-    | Dispatch<SetStateAction<{ [key: number]: number }>>
-    | undefined;
+  setSpanScores: Dispatch<SetStateAction<{ [key: number]: number }>>;
+  overallScore: number | undefined;
+  setOverallScore: Dispatch<SetStateAction<number | undefined>>;
+  submitAnnotations: () => void;
 };
 
 const SpanEvalContext = createContext<SpanEvalContextType | undefined>(
@@ -61,6 +63,7 @@ export const SpanEvalProvider = ({ children }: SpanEvalProviderProps) => {
   );
   const [diffContent, setDiffContent] =
     useState<React.ReactNode>(translatedText);
+  const [edits, setEdits] = useState<[]>([]);
 
   const setEntryIdx = (newEntryIdx: number) => {
     if (newEntryIdx >= input.length) {
@@ -104,6 +107,29 @@ export const SpanEvalProvider = ({ children }: SpanEvalProviderProps) => {
     [key: number]: number;
   }>({}); // span idx: score
 
+  const [overallScore, setOverallScore] = useState<number | undefined>();
+  const submitAnnotations = () => {
+    fetch(
+      "https://307od668g8.execute-api.us-east-1.amazonaws.com/default/submitUserAnnotations",
+      {
+        method: "POST",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+        mode: "no-cors",
+        body: JSON.stringify({
+          original: origText,
+          translated: translatedText,
+          edits: edits,
+          error_spans: errorSpans,
+          span_scores: spanScores,
+          overall_score: overallScore,
+        }),
+      }
+    );
+  };
+
   useEffect(() => {
     setSpanScores(spanScores);
   }, [spanScores]);
@@ -119,10 +145,15 @@ export const SpanEvalProvider = ({ children }: SpanEvalProviderProps) => {
     addNewErrorSpan,
     diffContent,
     setDiffContent,
+    edits,
+    setEdits,
     selectedSpanIdx,
     setSelectedSpanIdx,
     spanScores,
     setSpanScores,
+    overallScore,
+    setOverallScore,
+    submitAnnotations,
   };
 
   return (

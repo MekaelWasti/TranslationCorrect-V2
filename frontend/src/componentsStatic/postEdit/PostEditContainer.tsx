@@ -18,7 +18,7 @@ export const PostEditContainer: React.FC<PostEditContainerProps> = ({
   onDiffTextUpdate,
 }) => {
   const editableDivRef = useRef<HTMLDivElement>(null);
-  const { translatedText, addNewErrorSpan } = useSpanEvalContext();
+  const { translatedText, addNewErrorSpan, setEdits } = useSpanEvalContext();
 
   const applyHighlight = () => {
     const selection = window.getSelection();
@@ -42,7 +42,11 @@ export const PostEditContainer: React.FC<PostEditContainerProps> = ({
   const generateDiff = (original: string, modified: string) => {
     const dmp = new diff_match_patch();
     const diffs = dmp.diff_main(original, modified);
+    setEdits(diffs as []);
     dmp.diff_cleanupSemantic(diffs);
+
+    console.log("==========");
+    console.log(diffs);
 
     // Convert diffs into React elements
     const diffElements = diffs.map(([type, text], index) => {

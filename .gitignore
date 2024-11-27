@@ -1,3 +1,5 @@
 *.env
 Lib/
 myenv/*
+
+.DS_Store

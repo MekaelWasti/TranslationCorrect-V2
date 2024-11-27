@@ -1,10 +1,11 @@
-import React, { useState } from "react";
+import React from "react";
 import "../../index.css";
+import { useSpanEvalContext } from "../SpanEvalProvider";
 
 // **ScoringContainer Component**
 export const OverallScoreSlider: React.FC = () => {
+  const { overallScore, setOverallScore } = useSpanEvalContext();
   // **Functions**
-  const [overallScore, setOverallScore] = useState<number>(50);
   const handleOverallScoreChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setOverallScore(Number(e.target.value));
   };
@@ -20,7 +21,7 @@ export const OverallScoreSlider: React.FC = () => {
           type="range"
           min="0"
           max="100"
-          value={overallScore}
+          value={overallScore ?? 50}
           onChange={handleOverallScoreChange}
         />
         <h4>100</h4>
