@@ -8,7 +8,8 @@ import {
 } from "react";
 
 import { HighlightedError } from "../types";
-import inputJson from "../static/input_sample.json";
+// import inputJson from "../static/input_sample.json";
+import inputJson from "../static/input.json";
 
 // Provides context to components responsible for evaluating / editing translations.
 // Currently only stores selected span index and span scores. Down the road, the provider can be used to track all evaluation/edit status.
