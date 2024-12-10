@@ -107,8 +107,9 @@ const HighlightedText: React.FC<HighlightTextProps> = ({
   };
 
   useEffect(() => {
-    const handleClickOutsideDropDown = (event: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+    const handleClickOutsideDropDown = () => {
+      // if (dropdownRef.current && !dropdownRef.current!.contains(event.target)) {
+      if (dropdownRef.current) {
         setSpanDropdown(false);
       }
     };
@@ -307,7 +308,7 @@ const HighlightedText: React.FC<HighlightTextProps> = ({
               <div className="dropdown-selection" key={errorType}>
                 <li
                   style={{
-                    "--hover-color": colorMappings[errorType],
+                    color: colorMappings[errorType],
                   }}
                   onClick={() => handleTypeSelect(errorType)}
                 >
