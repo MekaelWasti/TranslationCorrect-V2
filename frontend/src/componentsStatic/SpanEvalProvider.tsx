@@ -8,6 +8,7 @@ import {
 } from "react";
 
 import { HighlightedError } from "../types";
+
 // import inputJson from "../static/input_sample.json";
 import inputJson from "../static/input.json";
 
