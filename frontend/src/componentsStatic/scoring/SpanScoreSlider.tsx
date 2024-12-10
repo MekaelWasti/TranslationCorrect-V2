@@ -7,7 +7,7 @@ export const SpanScoreSlider: React.FC = () => {
   // **Functions**
   const { selectedSpanIdx, spanScores, setSpanScores } = useSpanEvalContext();
   const handleSpanScoreChange = (index: number, score: number) => {
-    setSpanScores((prevScores) => ({ ...prevScores, [index]: score }));
+    setSpanScores!((prevScores) => ({ ...prevScores, [index]: score }));
   };
 
   //   Return JSX
