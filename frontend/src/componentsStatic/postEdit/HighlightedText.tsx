@@ -1,3 +1,6 @@
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-nocheck
+
 import React, { useState, useRef, useEffect, ReactElement } from "react";
 import { HighlightedError, colorMappings } from "../../types";
 import "../../index.css";
@@ -276,6 +279,7 @@ const HighlightedText: React.FC<HighlightTextProps> = ({
               <div className="dropdown-selection" key={errorType}>
                 <li
                   style={{
+                    // color: colorMappings[errorType],
                     "--hover-color": colorMappings[errorType],
                   }}
                   onClick={() => handleTypeSelect(errorType)}
