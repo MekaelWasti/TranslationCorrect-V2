@@ -2,6 +2,7 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 // To switch to previous version, update the line below to 'import App from "./components/App.tsx";'
 import App from "./componentsStatic/App.tsx";
+// import App from "./App copy.tsx";
 import "./index.css";
 import { SpanEvalProvider } from "./componentsStatic/SpanEvalProvider.tsx";
 

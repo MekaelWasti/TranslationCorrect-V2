@@ -174,8 +174,19 @@ li {
   border-radius: 30px;
 }
 
+.message {
+  color: rgb(133, 177, 246);
+  
+}
+
+.message-div {
+  display: flex;
+  justify-content: center;
+
+}
+
 .text-input textarea {
-  height: 31.35vh;
+  /* height: 100%; */
   width: 100%;
   border: none;
   outline: none;
@@ -264,6 +275,10 @@ li {
   margin-top: 5vh;
   margin-bottom: 5vh;
   border: 1px solid #262626;
+}
+
+.spacer {
+  width: 10vh;
 }
   
   

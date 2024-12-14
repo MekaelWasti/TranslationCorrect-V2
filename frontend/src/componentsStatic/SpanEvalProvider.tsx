@@ -44,9 +44,10 @@ const SpanEvalContext = createContext<SpanEvalContextType | undefined>(
 type SpanEvalProviderProps = { children: React.ReactNode };
 
 export const SpanEvalProvider = ({ children }: SpanEvalProviderProps) => {
-  const [curEntryIdx, setCurEntryIdx] = useState<number>(
-    Number(localStorage.getItem("curEntryIdx")) || 0
-  );
+  // const [curEntryIdx, setCurEntryIdx] = useState<number>(
+  //   Number(localStorage.getItem("curEntryIdx")) || 0
+  // );
+  const [curEntryIdx, setCurEntryIdx] = useState<number>(6);
   const input = inputJson.input;
 
   // const origText = input[curEntryIdx].original_text;
