@@ -13,6 +13,8 @@ from pipeline import translate, error_span, errorSpanHighlighter, edit_context, 
 import threading
 import time
 import json
+import torch
+
 
 app = FastAPI()
 
@@ -33,16 +35,17 @@ async def startup_event():
     # translation_model = AutoModelForSeq2SeqLM.from_pretrained(model_name)
     local_model_dir = "./local_model"
     tokenizer = AutoTokenizer.from_pretrained(local_model_dir)
-    translation_model = AutoModelForSeq2SeqLM.from_pretrained(local_model_dir)
+    translation_model = AutoModelForSeq2SeqLM.from_pretrained(local_model_dir).to('cuda').eval()
 
-    local_model_dir = "./local_model"
-    tokenizer.save_pretrained(local_model_dir)
-    translation_model.save_pretrained(local_model_dir)
+    # local_model_dir = "./local_model"
+    # tokenizer.save_pretrained(local_model_dir)
+    # translation_model.save_pretrained(local_model_dir)
 
     # Load error span model
-    # error_span_model_path = download_model("Unbabel/XCOMET-XL")
+    error_span_model_path = download_model("Unbabel/XCOMET-XL")
     error_span_model_path = 'C:\\Users\\mekae\\.cache\\huggingface\\hub\\models--Unbabel--XCOMET-XL\\snapshots\\baa17625e541fe87c4c0010616e35eab12c864f7\\checkpoints\\model.ckpt'
-    error_span_model = load_from_checkpoint(error_span_model_path)
+    error_span_model = load_from_checkpoint(error_span_model_path).to('cuda').eval()
+
 
 app.add_middleware(
     CORSMiddleware,
@@ -78,6 +81,8 @@ def submit_prompt(item: StringItem):
 
     # highlights = """<span><span class="highlight" style="background-color: #00A0F0; padding: 0vh 0vw 0vh 0vw; z-index: 0;">Student</span>s from Stanford University Medical School an    <span class="highlight" style="background-color: #D3365A; padding: 1vh 0vw 1vh 0vw; z-index: 1;">nounced Monday the invention of a new diagnostic tool tha</span>    t can sort cells by type of small printed chip</span>"""
     threading.Thread(target=generate_and_store_error_spans, args=(src, res)).start()
+    # asyncio.create_task(generate_and_store_error_spans(src, res))
+
     
     
     # res = backend_translation(item.value)
