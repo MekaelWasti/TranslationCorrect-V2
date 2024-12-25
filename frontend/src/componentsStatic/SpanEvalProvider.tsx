@@ -17,9 +17,12 @@ type SpanEvalContextType = {
   curEntryIdx: number;
   setEntryIdx: (newEntryIdx: number) => void;
   origText: string;
+  setOrigText: Dispatch<SetStateAction<string>>;
   translatedText: string;
+  setTranslatedText: Dispatch<SetStateAction<string>>;
   originalSpans: HighlightedError[] | undefined;
   errorSpans: HighlightedError[] | undefined;
+  setErrorSpans: Dispatch<SetStateAction<HighlightedError[] | undefined>>;
   updateSpanErrorType: (idx: number, newType: string) => void;
   addNewErrorSpan: (
     startTextIdx: number,
@@ -46,21 +49,34 @@ export const SpanEvalProvider = ({ children }: SpanEvalProviderProps) => {
   const [curEntryIdx, setCurEntryIdx] = useState<number>(
     Number(localStorage.getItem("curEntryIdx")) || 0
   );
+
   const input = inputJson.input;
 
+  console.log(input);
+  console.log(curEntryIdx);
+
   // const origText = input[curEntryIdx].original_text;
-  const [origText, setOrigText] = useState<string>(
-    input[curEntryIdx].original_text
-  );
-  const [translatedText, setTranslatedText] = useState<string>(
-    input[curEntryIdx].translated_text
-  );
+  // const [origText, setOrigText] = useState<string>(
+  //   input[curEntryIdx].original_text
+  // );
+  // const [translatedText, setTranslatedText] = useState<string>(
+  //   input[curEntryIdx].translated_text
+  // );
+  // const originalSpans = input[curEntryIdx].errorSpans;
+  // const [errorSpans, setErrorSpans] = useState<HighlightedError[]>(
+  //   input[curEntryIdx].errorSpans
+  // );
+  // const [diffContent, setDiffContent] =
+  //   useState<React.ReactNode>(translatedText);
+
+  // FOR NOW SETTING CLEARING INITIAL VALUE
+  // FOR NOW SETTING CLEARING INITIAL VALUE
+  // This system of loading the states from inputs or database should be if the user decides to through a button click
+  const [origText, setOrigText] = useState<string>("");
+  const [translatedText, setTranslatedText] = useState<string>("");
   const originalSpans = input[curEntryIdx].errorSpans;
-  const [errorSpans, setErrorSpans] = useState<HighlightedError[]>(
-    input[curEntryIdx].errorSpans
-  );
-  const [diffContent, setDiffContent] =
-    useState<React.ReactNode>(translatedText);
+  const [errorSpans, setErrorSpans] = useState<HighlightedError[]>([]);
+  const [diffContent, setDiffContent] = useState<React.ReactNode>("");
 
   const setEntryIdx = (newEntryIdx: number) => {
     if (newEntryIdx >= input.length) {
@@ -108,13 +124,17 @@ export const SpanEvalProvider = ({ children }: SpanEvalProviderProps) => {
     setSpanScores(spanScores);
   }, [spanScores]);
 
+  // Updated context value with setters for origText, translatedText, and errorSpans
   const contextValue = {
     curEntryIdx,
     setEntryIdx,
     origText,
+    setOrigText, // Add setter for origText
     translatedText,
+    setTranslatedText, // Add setter for translatedText
     originalSpans,
     errorSpans,
+    setErrorSpans, // Add setter for errorSpans
     updateSpanErrorType,
     addNewErrorSpan,
     diffContent,

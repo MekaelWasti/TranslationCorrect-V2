@@ -19,6 +19,10 @@
   padding: 0;
 }
 
+html {
+  font-size: 135%;
+}
+
 a {
   font-weight: 500;
   color: #646cff;
@@ -34,8 +38,13 @@ body {
   place-items: start;
   align-items: start;
   justify-content: start;
-  min-width: 320px;
-  min-height: 100vh;
+  /* min-width: 320px; */
+  /* min-height: 100vh; */
+}
+
+.application_wrapper {
+  max-width: 100vw;
+  /* transform: scale(1.3); */
 }
 
 h1 {
@@ -91,6 +100,11 @@ h1 {
   margin: 0 0 0 0;
 }
 
+.logo_1 {
+  padding: 7vh 0 2vh 0;
+  margin: 0 0 0 0;
+}
+
 .navbar .navbar-contents .navbar-item .navbar-item-name {
   color: #ffffff;
   font-family: "Plus Jakarta Sans";
@@ -114,10 +128,14 @@ h1 {
 .input-container {
   /* We should enforce some minimum height for this; otherwise, too compressed on mobile*/
   width: 76.74vw; /* 76.74% of screen width */
-  height: 37.79vh; /* 37.79% of screen height */
+
+  /*height: 37.79vh; /* 37.79% of screen height */
   background: #1a1a1a;
   border-radius: 8px;
   outline: #333333 solid 1px;
+}
+
+.wrapper {
 }
 
 .wrapper .text-input {
@@ -181,11 +199,16 @@ li {
   outline: none;
   background: none;
   font-size: 22px;
-  padding-left: 23px;
+  /* padding-left: 23px; */
   padding-right: 23px;
   padding-top: 29px;
   padding-bottom: 29px;
   resize: none;
+}
+
+.from-text::placeholder,
+.to-text::placeholder {
+  padding-left: 23px;
 }
 
 .text-input .to-text {
@@ -193,7 +216,8 @@ li {
 }
 
 .translate-text-button button {
-  width: 76.74vw;
+  /* width: 76.74vw; */
+  width: 100%;
   border-radius: 8px;
   border: 1px solid transparent;
   padding: 14px;
@@ -204,6 +228,7 @@ li {
   background-color: #2a6df4;
   cursor: pointer;
   transition: border-color 0.25s;
+  text-align: center;
 }
 
 .translate-text-button button:hover {
@@ -265,8 +290,7 @@ li {
   margin-bottom: 5vh;
   border: 1px solid #262626;
 }
-  
-  
+
 .error-highlighting-section {
   text-align: left;
   /* margin: 0 0 0 12vh; */
@@ -632,16 +656,16 @@ li {
 
 .post-edit-translation-field {
   flex-basis: 100%;
-  font-size: medium;
+  font-size: 100%;
   width: 100%;
-  height: 20vh;
+  /* height: 20vh; */
   background-color: #1a1a1a;
   border-radius: 8px;
   border: #333333 solid 1.7px;
   font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
   resize: none;
   overflow: hidden;
-  padding: 1.5vh 1.5vw 1.5vh 1.5vw;
+  padding: 4.5vh 1.5vw 4.5vh 1.5vw;
   margin: 2vh 0vw 0vh 0vw;
 }
 
@@ -650,7 +674,8 @@ li {
 }
 
 .custom-correction-button,
-.insert-span-button {
+.insert-span-button,
+.restart_entry_button {
   margin: 2vh 2vw 1vh 2vw;
   padding: 1vh 3vw 1vh 3vw;
   border-radius: 7px;
@@ -660,6 +685,10 @@ li {
   font-size: 1rem;
   font-weight: 550;
   cursor: pointer;
+}
+
+.restart_entry_button {
+  margin: 0vh 0vw 0vh 0vw;
 }
 
 /* Scoring Slider Section */
@@ -681,6 +710,9 @@ li {
   color: #fff; /* Text color for contrast */
 }
 
+.span-scores-display {
+}
+
 .slider-section {
   display: flex;
   flex-direction: row;
@@ -689,11 +721,8 @@ li {
   flex-wrap: wrap;
   gap: 10px;
   margin-top: 10px;
-
 }
 
-  
-  
 .slider-section > h4 {
   padding: 0 0 0 0;
   margin: 0 0 0 0;
@@ -730,7 +759,6 @@ li {
   transition: opacity 0.2s;
 }
 
-
 .span-slider::-webkit-slider-thumb {
   -webkit-appearance: none; /* Override default look */
   appearance: none;
@@ -740,7 +768,6 @@ li {
   border-radius: 50%; /* Rounded thumb */
   cursor: pointer; /* Cursor on hover */
 }
-
 
 /* Responsive adjustments */
 @media (max-width: 768px) {
@@ -760,8 +787,6 @@ li {
     margin: 20px 0;
   }
 }
-
-
 
 .body {
   padding: 0 10vw 0 10vw;

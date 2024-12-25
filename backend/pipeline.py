@@ -22,8 +22,8 @@ def translate(tokenizer, translation_model, source_text, source_lang, target_lan
     # Generate the translation according to target language specified
     with autocast():
         translated_tokens = translation_model.generate(
-            **inputs, forced_bos_token_id=tokenizer.lang_code_to_id[target_lang], max_length=30
-        )
+            **inputs, forced_bos_token_id=tokenizer.convert_tokens_to_ids(target_lang), max_length=100
+        ).to("cuda")
 
     # Decode the translated tokens for translated text
     translated_text = tokenizer.batch_decode(translated_tokens, skip_special_tokens=True)[0]
@@ -46,6 +46,8 @@ def generate_error_spans(error_span_model, client, src, mt):
     with torch.no_grad(): 
      error_span_model_output = error_span_model.predict(data, batch_size=1, gpus=1)
 
+     print("SPANS GENERATED: ", error_span_model_output.metadata.error_spans)   
+
     response = client.chat.completions.create(
         model="gpt-4o-mini-2024-07-18",
         # model="gpt-3.5-turbo-16k",
@@ -54,7 +56,7 @@ def generate_error_spans(error_span_model, client, src, mt):
                 "role": "system",
                 "content": [
                     {
-                        "text": "You are an expert in multilingual translations. Given MQM scores, corrected text, error spans, you will determine a classification for the error out of ONLY ONE OF the following. YOU CAN ONLY USE ERROR TYPE FROM THE FOLLOWING: Addition of Text ,Negation Errors ,Mask In-filling ,Named Entity (NE) Errors ,Number (NUM) Errors ,Hallucinations. \n\nThe output MUST be in JSON format and be correctly indicating the start and end corresponding indices The 'correct_text' attribute must identify the error in the 'translated_text' langauge, meaching they are both different from the original text language \n\n{\r\n    \"errors\": [\r\n      {\r\n        \"original_text\": \"Учените\",\r\n        \"translated_text\": \"Students\",\r\n        \"correct_text\": \"Scientists\",\r\n        \"start_index_orig\": 0,\n\r\n        \"end_index_orig\": 7,\r\n        \"start_index_translation\": 0,\r\n        \"end_index_translation\": 7,\r\n        \"error_type\": \"Incorrect Subject\"\r\n      } \n    ]\r\n  }\r\n\r\n",
+                        "text": "You are an expert in multilingual translations. Given MQM scores, corrected text, error spans, you will determine a classification for the error out of ONLY ONE OF the following. YOU CAN ONLY USE ERROR TYPE FROM THE FOLLOWING: Addition of Text ,Negation Errors ,Mask In-filling ,Named Entity (NE) Errors ,Number (NUM) Errors ,Hallucinations. \n\nThe output MUST be in JSON format and be correctly indicating the start and end corresponding indices The 'correct_text' attribute must identify the error in the 'translated_text' langauge, meaching they are both different from the original text language \n\n{\r\n    \"errorSpans\": [\r\n      {\r\n        \"original_text\": \"Учените\",\r\n        \"translated_text\": \"Students\",\r\n        \"correct_text\": \"Scientists\",\r\n        \"start_index_orig\": 0,\n\r\n        \"end_index_orig\": 7,\r\n        \"start_index_translation\": 0,\r\n        \"end_index_translation\": 7,\r\n        \"error_type\": \"Incorrect Subject\"\r\n      } \n    ]\r\n  }\r\n\r\n",
                         "type": "text"
                     }
                 ]
@@ -104,7 +106,7 @@ def errorSpanHighlighter(translation, spans):
     zIndex = 0
     offset = 0
 
-    for error in spans["errors"]:
+    for error in spans["errorSpans"]:
         start = error["start_index_translation"]
         end = error["end_index_translation"]
         color = color_mappings.get(error["error_type"], "#2f3472")

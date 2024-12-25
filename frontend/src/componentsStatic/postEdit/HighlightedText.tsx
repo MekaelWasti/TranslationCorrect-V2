@@ -127,7 +127,7 @@ const HighlightedText: React.FC<HighlightTextProps> = ({
     setSpanDropdown(false);
   };
 
-  console.log(highlights);
+  // console.log(highlights); // This is printing constantly
 
   interface Range {
     start: number;

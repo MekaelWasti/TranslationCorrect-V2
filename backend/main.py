@@ -1,5 +1,5 @@
-# python3.10 -m uvicorn main:app --reload --host 0.0.0.0 --port 63030
-# uvicorn main:app --reload --host 0.0.0.0 --port 63030
+# python3.10 -m uvicorn main:app --reload --host 0.0.0.0 --port 64000
+# uvicorn main:app --reload --host 0.0.0.0 --port 64000
 
 
 from fastapi import FastAPI, Form, Request
@@ -42,9 +42,15 @@ async def startup_event():
     # translation_model.save_pretrained(local_model_dir)
 
     # Load error span model
-    error_span_model_path = download_model("Unbabel/XCOMET-XL")
-    error_span_model_path = 'C:\\Users\\mekae\\.cache\\huggingface\\hub\\models--Unbabel--XCOMET-XL\\snapshots\\baa17625e541fe87c4c0010616e35eab12c864f7\\checkpoints\\model.ckpt'
-    error_span_model = load_from_checkpoint(error_span_model_path).to('cuda').eval()
+    # error_span_model_path = download_model("Unbabel/XCOMET-XL")
+    # error_span_model_path = 'C:\\Users\\mekae\\.cache\\huggingface\\hub\\models--Unbabel--XCOMET-XL\\snapshots\\baa17625e541fe87c4c0010616e35eab12c864f7\\checkpoints\\model.ckpt'
+    # error_span_model = load_from_checkpoint(error_span_model_path).to('cuda').eval()
+
+    error_span_model = torch.load("./Baseline XComet/COMET/full_fp16_model.pth").to('cuda').eval()
+    torch.set_float32_matmul_precision("high")
+
+
+
 
 
 app.add_middleware(
@@ -115,6 +121,7 @@ def fetch_error_spans(item: StringItem):
 
 
     print(f"Returning Spans: {error_spans}")
+    print(f"Returning Highlights: {highlights}")
 
     # error_spans = {
     # 'text': '小型印刷晶片', 
@@ -177,4 +184,5 @@ def rephrase(item: StringItem):
 if __name__ == "__main__":
     import uvicorn
     # uvicorn.run(app, host="0.0.0.0", port=8000)
-    uvicorn.run(app, host="0.0.0.0", port=63030)
+    # uvicorn.run(app, host="0.0.0.0", port=63030)
+    uvicorn.run(app, host="0.0.0.0", port=64000)

@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import loadingIconWhite from "../assets/loading_icon_white.svg";
+import logo from "../assets/logo.svg";
 
 import "../index.css";
 import DOMPurify from "dompurify";
@@ -12,9 +13,12 @@ import { useSpanEvalContext } from "./SpanEvalProvider";
 const App: React.FC = () => {
   const {
     origText: referenceTranslation,
+    setOrigText,
     translatedText: machineTranslation,
+    setTranslatedText,
     originalSpans: originalHighlightedError,
     errorSpans: highlightedError,
+    setErrorSpans,
     curEntryIdx,
     setEntryIdx,
     diffContent,
@@ -23,12 +27,17 @@ const App: React.FC = () => {
 
   console.log(curEntryIdx);
 
+  // *NOTE*
+  // For now I want to CLEAR the translation contents on the screen.
+  // It can be made into an option of it's own to LOAD in a translation from the backend.
+
   // const [diffContent, setDiffContent] =
   //   useState<React.ReactNode>(machineTranslation);
 
-  const [error_spans, setErrorSpans] = useState();
+  const [error_spans, setErrorSpans_] = useState();
 
   const [isLoading, setIsLoading] = useState(false);
+  const [displayedTranslation, setDisplayedTranslation] = useState(""); // Streaming effect state
   const [translation, setTranslation] = useState("");
   const [sourceTextInput, setSourceTextInput] = useState(
     // "Kuwa mbere, abahanga ba siyansi bo mu Ishuri rikuru ry’ubuvuzi rya kaminuza ya Stanford bataganje ko havumbuwe igikoresho gishya cyo gusuzuma gishobora gutandukanya ingirabuzima"
@@ -55,6 +64,26 @@ const App: React.FC = () => {
     },
   ]);
 
+  // Streaming animation effect
+  useEffect(() => {
+    if (referenceTranslation) {
+      let currentIndex = 0;
+      const intervalId = setInterval(() => {
+        if (currentIndex < referenceTranslation.length) {
+          setDisplayedTranslation(
+            (prev) => prev + referenceTranslation[currentIndex]
+          );
+          currentIndex++;
+        } else {
+          clearInterval(intervalId); // Stop when the animation is complete
+        }
+      }, 50); // Adjust delay for typing speed
+      return () => clearInterval(intervalId);
+    } else {
+      setDisplayedTranslation(""); // Clear text when translation resets
+    }
+  }, [referenceTranslation]);
+
   const handleDiffTextUpdate = (parsedDiff: React.ReactNode) => {
     setDiffContent(parsedDiff);
   };
@@ -66,18 +95,22 @@ const App: React.FC = () => {
   const handleSubmission = (
     e: React.MouseEvent<HTMLButtonElement, MouseEvent>
   ) => {
-    sendTranslation(sourceTextInput);
     setIsLoading(true);
+    setOrigText(sourceTextInput);
+    sendTranslation(sourceTextInput);
+    setErrorSpans([]);
   };
 
   const sendTranslation = async (userInput: string) => {
     try {
       const response = await fetch(
         // "http://127.0.0.1:63030/submit_translation",
-        "http://127.0.0.1:64000/submit_translation",
+        // "http://127.0.0.1:64000/submit_translation",
+        "https://43fb-99-232-136-159.ngrok-free.app/submit_translation", // Ngrok URL
         {
           method: "POST",
           headers: {
+            "ngrok-skip-browser-warning": "true", // Bypass ngrok browser warning
             "Content-Type": "application/json; charset=UTF-8", // Need UTF-8 encoding
           },
           body: JSON.stringify({ value: userInput, translation: "" }),
@@ -91,6 +124,9 @@ const App: React.FC = () => {
       const data = await response.json();
       setIsLoading(false);
       setTranslation(data.response);
+
+      setTranslatedText(data.response);
+      setDiffContent(data.response);
 
       console.log(data.highlights);
       const sanitized = DOMPurify.sanitize(data.highlights);
@@ -112,10 +148,12 @@ const App: React.FC = () => {
       try {
         const response = await fetch(
           // "http://127.0.0.1:63030/fetch_error_spans",
-          "http://127.0.0.1:64000/fetch_error_spans",
+          // "http://127.0.0.1:64000/fetch_error_spans",
+          "https://43fb-99-232-136-159.ngrok-free.app/fetch_error_spans", // Ngrok URL
           {
             method: "POST",
             headers: {
+              "ngrok-skip-browser-warning": "true", // Bypass ngrok browser warning
               "Content-Type": "application/json; charset=UTF-8", // Need UTF-8 encoding
             },
             body: JSON.stringify({
@@ -130,128 +168,139 @@ const App: React.FC = () => {
         }
 
         const data = await response.json();
-        setErrorSpans(data.error_spans);
+        setErrorSpans_(data.error_spans);
 
         if (Object.keys(data.error_spans).length > 0) {
           clearInterval(intervalId); // Stop polling once the data is available
-          console.log("Secondary operation result:", data.error_spans);
+          // console.log("Secondary operation result:", data.error_spans);
           // Process the result of the secondary operation
 
-          console.log(data.highlights);
-          console.log(data.error_spans.errors);
+          // console.log(data.highlights);
+          // console.log(data.error_spans.errorSpans);
           const sanitized = DOMPurify.sanitize(data.highlights);
           setSanitizedHtmlString(sanitized);
-          setHighlightedError(data.error_spans.errors);
+          setHighlightedError(data.error_spans.errorSpans);
+          // console.log(data.error_spans.errorSpans);
+          setErrorSpans(data.error_spans.errorSpans);
         }
       } catch (error) {
         console.error("Error:", error);
       }
-    }, 2000); // Poll every 2 seconds, adjust interval as needed
+    }, 2500); // Poll every 2 seconds, adjust interval as needed
   };
 
   // **JSX**
   return (
     <div className="body">
-      <div className="input-and-button">
-        <div className="input-container">
-          <div className="wrapper">
-            <ul className="language-bar">
-              <li className="from-languages">
-                <select>
-                  <option value="en-US">English</option>
-                  <option value="hi-IN">Hindi</option>
-                  <option value="ne-NP">Nepali</option>
-                </select>
-              </li>
-              <li className="to-languages">
-                <select>
-                  <option value="zh-TW">Chinese (Simplified)</option>
-                  <option value="en-US">English</option>
-                  <option value="hi-IN">Hindi</option>
-                  <option value="ne-NP">Nepali</option>
-                </select>
-              </li>
-            </ul>
-            <div className="text-input">
-              <textarea
-                className="from-text"
-                onChange={handleInputBoxChange}
-                placeholder="Type to translate"
-              ></textarea>
-              <div className="to-text-container">
+      <div className="application_wrapper">
+        <img className="logo_1" src={logo} alt="" />
+        <div className="wrapper">
+          <div className="input-and-button">
+            <div className="input-container">
+              <ul className="language-bar">
+                <li className="from-languages">
+                  <select>
+                    <option value="en-US">English</option>
+                    <option value="hi-IN">Hindi</option>
+                    <option value="ne-NP">Nepali</option>
+                  </select>
+                </li>
+                <li className="to-languages">
+                  <select>
+                    <option value="zh-TW">Chinese (Simplified)</option>
+                    <option value="en-US">English</option>
+                    <option value="hi-IN">Hindi</option>
+                    <option value="ne-NP">Nepali</option>
+                  </select>
+                </li>
+              </ul>
+              <div className="text-input">
                 <textarea
-                  className={`to-text ${
-                    isLoading ? "loading-icon-hidden" : ""
-                  }`}
-                  value={translation}
-                  placeholder="Translated text appears here"
-                  readOnly
-                  disabled
+                  className="from-text"
+                  onChange={handleInputBoxChange}
+                  placeholder="Type to translate"
                 ></textarea>
-                <img
-                  className={`loading-icon ${
-                    isLoading ? "" : "loading-icon-hidden"
-                  }`}
-                  src={loadingIconWhite}
-                  alt=""
-                />
+                <div className="to-text-container">
+                  <textarea
+                    className={`to-text ${
+                      isLoading ? "loading-icon-hidden" : ""
+                    }`}
+                    value={translation}
+                    placeholder="Translated text appears here"
+                    readOnly
+                    disabled
+                  ></textarea>
+                  <img
+                    className={`loading-icon ${
+                      isLoading ? "" : "loading-icon-hidden"
+                    }`}
+                    src={loadingIconWhite}
+                    alt=""
+                  />
+                </div>
               </div>
             </div>
           </div>
+          <div className="translate-text-button">
+            <button onClick={handleSubmission}>Translate Text</button>
+          </div>
         </div>
-        <div className="translate-text-button">
-          <button onClick={handleSubmission}>Translate Text</button>
+        <div className="divider"></div>
+        <h3>Source</h3>
+        <div>
+          <HighlightedText
+            // text={referenceTranslation}
+            text={referenceTranslation}
+            // text={machineTranslation}
+            highlights={highlightedError!}
+            highlightKey="end_index_orig"
+            disableEdit={true}
+          />
         </div>
-      </div>
-      <div className="divider"></div>
-      <h3>Source</h3>
-      <div>
-        <HighlightedText
-          text={referenceTranslation}
-          // text={machineTranslation}
-          highlights={originalHighlightedError!}
-          highlightKey="end_index_orig"
-          disableEdit={true}
+        <br />
+        <br />
+        <h3>Machine Translation</h3>
+        <div>
+          <div className="machine-translation-output">
+            {diffContent && (
+              <HighlightedText
+                text={diffContent}
+                // text={machineTranslation}
+                highlights={highlightedError!}
+                highlightKey="end_index_translation"
+                disableEdit={true}
+              />
+            )}
+          </div>
+        </div>
+        <div className="divider"></div>
+        <PostEditContainer
+          machineTranslation={machineTranslation}
+          highlightedError={highlightedError!}
+          onDiffTextUpdate={handleDiffTextUpdate}
         />
-      </div>
-      <br />
-      <br />
-      <h3>Machine Translation</h3>
-      <div>
-        <div className="machine-translation-output">
-          {diffContent && (
-            <HighlightedText
-              text={diffContent}
-              // text={machineTranslation}
-              highlights={originalHighlightedError!}
-              highlightKey="end_index_translation"
-              disableEdit={true}
-            />
-          )}
+
+        {/* Scoring Section */}
+        <ScoringContainer />
+
+        <div className="accept-translation-section">
+          <button onClick={() => setEntryIdx(curEntryIdx + 1)}>
+            Submit Annotation
+          </button>
         </div>
-      </div>
-      <div className="divider"></div>
-      <PostEditContainer
-        machineTranslation={machineTranslation}
-        highlightedError={highlightedError!}
-        onDiffTextUpdate={handleDiffTextUpdate}
-      />
+        <div className="divider"></div>
+        <div>
+          <button
+            className="restart_entry_button"
+            onClick={() => setEntryIdx(0)}
+          >
+            Restart to entry #0
+          </button>
+        </div>
 
-      {/* Scoring Section */}
-      <ScoringContainer />
-
-      <div className="accept-translation-section">
-        <button onClick={() => setEntryIdx(curEntryIdx + 1)}>
-          Submit Annotation
-        </button>
-      </div>
-      <div className="divider"></div>
-      <div>
-        <button onClick={() => setEntryIdx(0)}>Restart to entry #0</button>
-      </div>
-
-      <div className="send-feedback">
-        <a>Send Feedback</a>
+        <div className="send-feedback">
+          <a>Send Feedback</a>
+        </div>
       </div>
     </div>
   );
