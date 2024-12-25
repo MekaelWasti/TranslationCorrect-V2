@@ -199,16 +199,11 @@ li {
   outline: none;
   background: none;
   font-size: 22px;
-  /* padding-left: 23px; */
-  padding-right: 23px;
+  padding-left: 23px;
+  /* padding-right: 23px; */
   padding-top: 29px;
   padding-bottom: 29px;
   resize: none;
-}
-
-.from-text::placeholder,
-.to-text::placeholder {
-  padding-left: 23px;
 }
 
 .text-input .to-text {
