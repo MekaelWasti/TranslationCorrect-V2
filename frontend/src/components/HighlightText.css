@@ -1,0 +1,36 @@
+.text-container {
+  font-size: 16px;
+  line-height: 1.5;
+}
+
+/* Use CSS variables for colors */
+:root {
+  --highlight-color-A: orange;
+  --highlight-color-B: limegreen;
+}
+
+/* Base highlight style */
+.highlight {
+  border-radius: 8px;
+  padding: 0 2px;
+}
+
+/* Highlight types */
+.highlight-A {
+  background-color: var(--highlight-color-A);
+}
+
+.highlight-B {
+  background-color: var(--highlight-color-B);
+}
+
+/* Overlapping highlights */
+.highlight-A.highlight-B {
+  background: linear-gradient(
+    to bottom,
+    var(--highlight-color-A) 0%,
+    var(--highlight-color-A) 50%,
+    var(--highlight-color-B) 50%,
+    var(--highlight-color-B) 100%
+  );
+}
