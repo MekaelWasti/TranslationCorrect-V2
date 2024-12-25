@@ -115,7 +115,7 @@ const HighlightText: React.FC<HighlightTextProps> = ({
             onMouseLeave && onMouseLeave(e, highlights[index])
           }
           onMouseMove={(e) => onMouseMove && onMouseMove(e, highlights[index])}
-          onMouseDown={(e) => onMouseDown && onMouseDown(e, highlights[index])}
+          // onMouseDown={(e) => onMouseDown && onMouseDown(e, highlights[index])}
         >
           {text.substring(start, end)}
         </span>

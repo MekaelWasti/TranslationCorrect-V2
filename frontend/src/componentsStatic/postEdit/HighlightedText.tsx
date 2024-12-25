@@ -306,9 +306,11 @@ const HighlightedText: React.FC<HighlightTextProps> = ({
             {Object.keys(colorMappings).map((errorType) => (
               <div className="dropdown-selection" key={errorType}>
                 <li
-                  style={{
-                    "--hover-color": colorMappings[errorType],
-                  }}
+                  style={
+                    {
+                      "--hover-color": colorMappings[errorType],
+                    } as React.CSSProperties
+                  }
                   onClick={() => handleTypeSelect(errorType)}
                 >
                   <p>{errorType}</p>
