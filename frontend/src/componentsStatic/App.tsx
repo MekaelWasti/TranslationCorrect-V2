@@ -105,8 +105,8 @@ const App: React.FC = () => {
     try {
       const response = await fetch(
         // "http://127.0.0.1:63030/submit_translation",
-        // "http://127.0.0.1:64000/submit_translation",
-        "https://43fb-99-232-136-159.ngrok-free.app/submit_translation", // Ngrok URL
+        "http://127.0.0.1:64000/submit_translation",
+        // "https://43fb-99-232-136-159.ngrok-free.app/submit_translation", // Ngrok URL
         {
           method: "POST",
           headers: {
@@ -148,8 +148,8 @@ const App: React.FC = () => {
       try {
         const response = await fetch(
           // "http://127.0.0.1:63030/fetch_error_spans",
-          // "http://127.0.0.1:64000/fetch_error_spans",
-          "https://43fb-99-232-136-159.ngrok-free.app/fetch_error_spans", // Ngrok URL
+          "http://127.0.0.1:64000/fetch_error_spans",
+          // "https://43fb-99-232-136-159.ngrok-free.app/fetch_error_spans", // Ngrok URL
           {
             method: "POST",
             headers: {

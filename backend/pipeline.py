@@ -1,5 +1,6 @@
 # imports
 import json
+import gc
 import os
 from dotenv import load_dotenv
 load_dotenv()
@@ -18,17 +19,22 @@ def translate(tokenizer, translation_model, source_text, source_lang, target_lan
 
     # Tokenize the input text
     inputs = tokenizer(source_text, return_tensors="pt").to('cuda')  # Ensure tensors are on GPU
+    # inputs = tokenizer(source_text, return_tensors="pt")  # Ensure tensors are on GPU
 
     # Generate the translation according to target language specified
     with autocast():
         translated_tokens = translation_model.generate(
             **inputs, forced_bos_token_id=tokenizer.convert_tokens_to_ids(target_lang), max_length=100
         ).to("cuda")
+        # )
 
     # Decode the translated tokens for translated text
     translated_text = tokenizer.batch_decode(translated_tokens, skip_special_tokens=True)[0]
 
     # Clear unused memory
+    del inputs, translated_tokens
+    torch.cuda.empty_cache()
+    gc.collect()
     manage_gpu_memory()
 
     return translated_text
@@ -78,12 +84,19 @@ def generate_error_spans(error_span_model, client, src, mt):
         presence_penalty=0
     )
 
-    json_object = json.loads(response.choices[0].message.content[8:-4])
-    print(json_object)
+    try:
+        json_object = json.loads(response.choices[0].message.content[8:-4])
+        print(json_object)
+    except json.JSONDecodeError:
+        print("Invalid JSON received from API")
+        return {}
+    
+    # json_object = json.loads(response.choices[0].message.content[8:-4])
 
     highlights = errorSpanHighlighter(mt, json_object)
 
     # Clear unused memory
+    del error_span_model_output
     manage_gpu_memory()
 
     return json_object, highlights
@@ -186,3 +199,5 @@ def error_span():
 def manage_gpu_memory():
     torch.cuda.empty_cache()  # Clear unused memory
     torch.cuda.synchronize()  # Ensure pending operations are complete
+    gc.collect()
+

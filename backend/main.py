@@ -2,7 +2,7 @@
 # uvicorn main:app --reload --host 0.0.0.0 --port 64000
 
 
-from fastapi import FastAPI, Form, Request
+from fastapi import FastAPI, Form, Request, BackgroundTasks
 from fastapi.middleware.cors import CORSMiddleware
 from transformers import AutoModelForSeq2SeqLM, AutoTokenizer
 from comet import download_model, load_from_checkpoint
@@ -14,9 +14,11 @@ import threading
 import time
 import json
 import torch
-
+import gc
 
 app = FastAPI()
+
+threads = []
 
 @app.on_event("startup")
 async def startup_event():
@@ -47,7 +49,8 @@ async def startup_event():
     # error_span_model = load_from_checkpoint(error_span_model_path).to('cuda').eval()
 
     error_span_model = torch.load("./Baseline XComet/COMET/full_fp16_model.pth").to('cuda').eval()
-    torch.set_float32_matmul_precision("high")
+    # torch.set_float32_matmul_precision("high")
+    torch.set_float32_matmul_precision("medium")
 
 
 
@@ -76,34 +79,52 @@ def read_root():
 
 
 
+# @app.post("/submit_translation")
+# def submit_prompt(item: StringItem):
+#     print(item.value)
+
+#     src = item.value
+
+#     res = translate(tokenizer, translation_model, src, "en", "zho_Hans")
+
+
+#     # highlights = """<span><span class="highlight" style="background-color: #00A0F0; padding: 0vh 0vw 0vh 0vw; z-index: 0;">Student</span>s from Stanford University Medical School an    <span class="highlight" style="background-color: #D3365A; padding: 1vh 0vw 1vh 0vw; z-index: 1;">nounced Monday the invention of a new diagnostic tool tha</span>    t can sort cells by type of small printed chip</span>"""
+#     thread = threading.Thread(target=generate_and_store_error_spans, args=(src, res))
+#     thread.start()
+#     threads.append(thread)
+#     # asyncio.create_task(generate_and_store_error_spans(src, res))
+
+    
+    
+#     # res = backend_translation(item.value)
+#     # return {"received_string": src, "response": res, "spans": error_spans, "highlights": highlights}
+#     return {"received_string": src, "response": res}
+
 @app.post("/submit_translation")
-def submit_prompt(item: StringItem):
-    print(item.value)
-
+async def submit_prompt(item: StringItem, background_tasks: BackgroundTasks):
     src = item.value
-
     res = translate(tokenizer, translation_model, src, "en", "zho_Hans")
-
-
-    # highlights = """<span><span class="highlight" style="background-color: #00A0F0; padding: 0vh 0vw 0vh 0vw; z-index: 0;">Student</span>s from Stanford University Medical School an    <span class="highlight" style="background-color: #D3365A; padding: 1vh 0vw 1vh 0vw; z-index: 1;">nounced Monday the invention of a new diagnostic tool tha</span>    t can sort cells by type of small printed chip</span>"""
-    threading.Thread(target=generate_and_store_error_spans, args=(src, res)).start()
-    # asyncio.create_task(generate_and_store_error_spans(src, res))
-
-    
-    
-    # res = backend_translation(item.value)
-    # return {"received_string": src, "response": res, "spans": error_spans, "highlights": highlights}
+    # background_tasks.add_task(generate_and_store_error_spans, src, res)
+    await generate_and_store_error_spans(src, res)
     return {"received_string": src, "response": res}
 
-def generate_and_store_error_spans(src, mt):
 
-    print("SRC: ", src, "MT: ", mt)
-    error_spans,highlights = generate_error_spans(error_span_model, client, src, mt)
-    
-    # Store the error spans
-    error_spans_storage[src] = (error_spans,highlights)
-    print(f"Stored Spans: {error_spans_storage[src]}")
-    # print(f"Generated Spans: {error_spans}")
+semaphore = asyncio.Semaphore(1)  # Allow up to 1 task
+
+async def generate_and_store_error_spans(src, mt):
+    async with semaphore:
+        try:
+            print("SRC: ", src, "MT: ", mt)
+            error_spans, highlights = generate_error_spans(error_span_model, client, src, mt)
+            error_spans_storage[src] = (error_spans, highlights)
+            print(f"Stored Spans: {error_spans_storage[src]}")
+        finally:
+            # Ensure memory cleanup
+            del mt
+            torch.cuda.empty_cache()
+            gc.collect()
+
+
 
 @app.post("/fetch_error_spans/")
 def fetch_error_spans(item: StringItem):
@@ -111,6 +132,7 @@ def fetch_error_spans(item: StringItem):
     res = item.translation
     
     spans = error_spans_storage.get(src, [])
+    error_spans_storage.pop(src, None)
 
     if spans:
         error_spans = spans[0]
@@ -179,6 +201,12 @@ def rephrase(item: StringItem):
 
     return {"response": res}
 
+@app.on_event("shutdown")
+async def shutdown_event():
+    for thread in threads:
+        thread.join()
+    threads.clear()
+    print("All threads have been joined and cleared")
 
 
 if __name__ == "__main__":

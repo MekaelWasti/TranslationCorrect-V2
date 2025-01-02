@@ -303,7 +303,7 @@ const HighlightedText: React.FC<HighlightTextProps> = ({
           }}
         >
           <ul>
-            {Object.keys(colorMappings).map((errorType) => (
+            {Object.keys(colorMappings).map((errorType, index, array) => (
               <div className="dropdown-selection" key={errorType}>
                 <li
                   style={
@@ -315,7 +315,10 @@ const HighlightedText: React.FC<HighlightTextProps> = ({
                 >
                   <p>{errorType}</p>
                 </li>
-                <hr className="dropdown-divider" />
+                {/* Don't render the divider if it is the last item */}
+                {index < array.length - 1 && (
+                  <hr className="dropdown-divider" />
+                )}
               </div>
             ))}
           </ul>

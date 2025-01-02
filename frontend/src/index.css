@@ -540,7 +540,7 @@ li {
 
 .dropdown-selection > li {
   padding: 0 0 0 0;
-  font-size: small;
+  font-size: large;
   padding: 0.8vh 1vw 0.8vh 1vw;
 }
 
@@ -653,6 +653,7 @@ li {
   flex-basis: 100%;
   font-size: 100%;
   width: 100%;
+  min-height: 25vh;
   /* height: 20vh; */
   background-color: #1a1a1a;
   border-radius: 8px;
@@ -660,7 +661,7 @@ li {
   font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
   resize: none;
   overflow: hidden;
-  padding: 4.5vh 1.5vw 4.5vh 1.5vw;
+  padding: 1.5vh 1.5vw 1.5vh 1.5vw;
   margin: 2vh 0vw 0vh 0vw;
 }
 
@@ -690,11 +691,12 @@ li {
 
 .scoring-section {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
+  flex-direction: column;
+  /* justify-content: space-between; */
+  /* align-items: center; */
   flex-wrap: wrap;
-  gap: 20px;
-  padding: 20px;
+  gap: 10px;
+  padding: 10px;
 }
 
 .span-score-section,
@@ -705,7 +707,16 @@ li {
   color: #fff; /* Text color for contrast */
 }
 
+.sliders-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
 .span-scores-display {
+  /* text-align: center; */
 }
 
 .slider-section {
@@ -740,7 +751,7 @@ li {
   -webkit-appearance: none; /* Override default CSS styles */
   appearance: none;
   width: 100%; /* Full-width */
-  height: 7px; /* Specified height */
+  height: 0.9vh; /* Specified height */
   background: rgb(75, 75, 75);
   /* background: linear-gradient( */
   /* to right, */
