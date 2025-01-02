@@ -106,7 +106,7 @@ const App: React.FC = () => {
       const response = await fetch(
         // "http://127.0.0.1:63030/submit_translation",
         // "http://127.0.0.1:64000/submit_translation",
-        "https://supreme-tortoise-steadily.ngrok-free.app", // Ngrok URL on serving desktop
+        "https://supreme-tortoise-steadily.ngrok-free.app/submit_translation", // Ngrok URL on serving desktop
         // "https://43fb-99-232-136-159.ngrok-free.app/submit_translation", // Ngrok URL
         {
           method: "POST",
@@ -150,7 +150,7 @@ const App: React.FC = () => {
         const response = await fetch(
           // "http://127.0.0.1:63030/fetch_error_spans",
           // "http://127.0.0.1:64000/fetch_error_spans",
-          "https://supreme-tortoise-steadily.ngrok-free.app", // Ngrok URL on serving desktop
+          "https://supreme-tortoise-steadily.ngrok-free.app/fetch_error_spans", // Ngrok URL on serving desktop
           // "https://43fb-99-232-136-159.ngrok-free.app/fetch_error_spans", // Ngrok URL
           {
             method: "POST",
