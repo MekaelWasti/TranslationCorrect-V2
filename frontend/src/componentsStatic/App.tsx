@@ -15,6 +15,7 @@ const App: React.FC = () => {
     setEntryIdx,
     diffContent,
     setDiffContent,
+    submitAnnotations,
   } = useSpanEvalContext();
 
   console.log(curEntryIdx);
@@ -69,7 +70,12 @@ const App: React.FC = () => {
       <ScoringContainer />
 
       <div className="accept-translation-section">
-        <button onClick={() => setEntryIdx(curEntryIdx + 1)}>
+        <button
+          onClick={async () => {
+            submitAnnotations();
+            setEntryIdx(curEntryIdx + 1);
+          }}
+        >
           Submit Annotation
         </button>
       </div>
