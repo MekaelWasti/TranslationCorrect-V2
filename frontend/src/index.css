@@ -265,8 +265,7 @@ li {
   margin-bottom: 5vh;
   border: 1px solid #262626;
 }
-  
-  
+
 .error-highlighting-section {
   text-align: left;
   /* margin: 0 0 0 12vh; */
@@ -666,34 +665,73 @@ li {
 
 .scoring-section {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
+  /* height: 60vh; */
+  flex-direction: column;
+  justify-content: flex-start;
+
+  /* justify-content: space-between; */
+  /* align-items: center; */
+
   flex-wrap: wrap;
-  gap: 20px;
-  padding: 20px;
+  gap: 10px;
+  /* padding: 10px; */
 }
 
 .span-score-section,
 .overall-score-section {
   flex: 1;
   max-width: 48%;
+  height: 100%;
+  justify-content: center;
+  align-items: center;
   text-align: center;
   color: #fff; /* Text color for contrast */
+
+  /* background-color: red; */
+}
+
+.overall-score-section {
+  display: flex;
+  flex-direction: column;
+}
+
+.span-severity-dropdown-section > select {
+  /* background-color: white; */
+  border-radius: 8px;
+  width: 60%;
+  padding: 0.5vh 0.5vw 0.5vh 0.5vw;
+  font-size: 1rem;
+  text-align: center;
+}
+
+.span-severity-dropdown-section {
+  /* padding: 0vh 0vw 12% 0vw; */
+}
+
+.sliders-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 10vh 0 0 0;
+  /* align-items: center; */
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.span-scores-display {
+  /* text-align: center; */
 }
 
 .slider-section {
   display: flex;
   flex-direction: row;
   align-items: center;
-  justify-content: space-evenly;
+  /* justify-content: space-evenly; */
   flex-wrap: wrap;
   gap: 10px;
   margin-top: 10px;
-
+  width: 35vw;
 }
 
-  
-  
 .slider-section > h4 {
   padding: 0 0 0 0;
   margin: 0 0 0 0;
@@ -730,7 +768,6 @@ li {
   transition: opacity 0.2s;
 }
 
-
 .span-slider::-webkit-slider-thumb {
   -webkit-appearance: none; /* Override default look */
   appearance: none;
@@ -740,7 +777,6 @@ li {
   border-radius: 50%; /* Rounded thumb */
   cursor: pointer; /* Cursor on hover */
 }
-
 
 /* Responsive adjustments */
 @media (max-width: 768px) {
@@ -760,8 +796,6 @@ li {
     margin: 20px 0;
   }
 }
-
-
 
 .body {
   padding: 0 10vw 0 10vw;

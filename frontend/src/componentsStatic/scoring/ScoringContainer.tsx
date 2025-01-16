@@ -1,6 +1,7 @@
 import React from "react";
 import "../../index.css";
 import { SpanScoreSlider } from "./SpanScoreSlider";
+import { SpanScoreDropdown } from "./SpanScoreDropdown";
 import { OverallScoreSlider } from "./OverallScoreSlider";
 import { useSpanEvalContext } from "../SpanEvalProvider";
 
@@ -10,9 +11,12 @@ export const ScoringContainer: React.FC = () => {
   //   Return JSX
   return (
     <div className="scoring-section">
-      <SpanScoreSlider />
-      <div className="divider"></div>
-      <OverallScoreSlider />
+      <div className="sliders-row">
+        {/* <SpanScoreSlider /> */}
+        <SpanScoreDropdown />
+        <div className="divider"></div>
+        <OverallScoreSlider />
+      </div>
       {/* Displaying All Span Scores */}
       <div className="span-scores-display">
         <h3>All Span Scores</h3>
