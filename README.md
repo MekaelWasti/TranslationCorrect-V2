@@ -1,8 +1,32 @@
-# Run Instructions
+<p align="center">
+  <img src="https://github.com/MekaelWasti/TranslationCorrect/blob/1f48ec4fc7c08d1d9f2af9a9d893b8cdfc2f3b2e/frontend/src/assets/logo.svg" alt="TranslationCorrect Logo" width="800">
+</p>
+
+
+# Table of Contents
+
+1. [Use TranslationCorrect Now!](#use-translationcorrect-now)
+2. [Full Repo Run Instructions](#full-repo-run-instructions)
+3. [Project Description](#project-description)
+4. [Data Usage & Training Resources](#data-usage--training-detailsresources)
+
+
+# Use TranslationCORRECT Now!
+
+The application is deployed <a href="https://error-in-translations.vercel.app/" target="_blank" rel="noopener noreferrer">here.</a>
+
+
+# Full Repo Run Instructions
 
 ### PIP & Packages
 
-make your own env in the root folder of our repo with 
+**Important**: Please ensure pip is updated to the latest version using the following command
+
+```
+python.exe -m pip install --upgrade pip
+```
+
+Make your own **virutal environment** in the root folder of our repo using: 
 
 ```jsx
 pip install virtualenv
@@ -18,41 +42,37 @@ e.g.
 python -m venv myenv
 ```
 
-This will create your environment folder. Do not push this folder when you are pushing to the repo, it will probably cause problems if you even try because massive file sizes. Either manually stage changes when pushing and do not push this folder, or put it in the gitignore
-
-Then you can do 
+<span id="activate-venv">**Activate** the environment using the following for **Windows**:</span>
 
 ```jsx
 {the name of your env}\Scripts\activate
 ```
-
 e.g.
 ```
 myenv\Scripts\activate
 ```
 
-now do
+
+For **Unix-based** systems (Linux/macOS) use `bin` instead of `scripts` as follows
+
+```jsx
+{the name of your env}/bin/activate
+```
+e.g.
+```
+myenv/bin/activate
+```
+
+
+Now install all **required packages** into your newly created environment:
 
 ```jsx
 pip install -r requirements.txt
 ```
-**Important**: Please ensure pip is updated to the latest version using the following command
 
-```
-python.exe -m pip install --upgrade pip
-```
+### To Run Backend
 
-Next, run the following commands to install these specific dependencies to avoid running into issues
-```
-pip install fastapi
-pip install transformers
-pip install unbabel-comet
-pip install python-dotenv
-pip install openai
-```
-It should install without collisions, if it doesn’t then fix it, ask me if you need to
-
-### To run Backend
+Make sure your virtual environment is active, using these [commands](#activate-venv)
 
 ```jsx
 cd .\backend\
@@ -60,10 +80,11 @@ cd .\backend\
 ```
 uvicorn main:app --reload --host 0.0.0.0 --port 63030
 ```
+*You can set the port to whatever port is open on your personal network*
 
-Should get this
+You should something like this as output:
 ```
-INFO:     Will watch for changes in these directories: ['C:\\Users\\mekae\\Desktop\\CS\\ML-DL\\Projects\\Lee Lab\\Error-in-Translations\\backend']
+INFO:     Will watch for changes in these directories: ['C:\\Users\\mekae\\TranslationCorrect\\backend']
 INFO:     Uvicorn running on http://0.0.0.0:63030 (Press CTRL+C to quit)
 INFO:     Started reloader process [68584] using WatchFiles
 INFO:     Started server process [63380]
@@ -78,11 +99,11 @@ INFO:     Started server process [51168]
 INFO:     Waiting for application startup.
 INFO:     Application startup complete.
 ```
-### Frontend
+### To Run Frontend
 
-You’re going to need react, which needs node so install that and make it work
+You're going to need to install [react](https://react.dev/learn/installation) on your machine
 
-Make a new terminal and then
+In a new terminal, from the **repository's parent folder**, do the following:
 
 ```jsx
 cd .\frontend\
@@ -90,19 +111,19 @@ cd .\frontend\
 
 Should be able to find versions using ```node -v``` and ```npm -v```
 ```
-PS C:\Users\mekae\Desktop\CS\ML-DL\Projects\Lee Lab\Error-in-Translations\frontend> node -v
+PS C:\Users\mekae\TranslationCorrect\frontend> node -v
 v20.13.1 
-PS C:\Users\mekae\Desktop\CS\ML-DL\Projects\Lee Lab\Error-in-Translations\frontend> npm -v       
+PS C:\Users\mekae\TranslationCorrect\frontend> npm -v       
 10.8.0
 ```
 
-Then I you should be able to 
+Then I you should be able to:
 
 ```jsx
 npm install
 ```
 
-and then to run it 
+and then to run it :
 
 ```jsx
 npm run dev
@@ -116,102 +137,52 @@ npm run dev
   ➜  press h + enter to show help
 ```
 
-ctrl+click on the localhost link to open it up in the browser
+**ctrl+click** on the localhost link to open it up in the browser
 
 Translate should work on your typed input, if not, check the console log in the browser for hints of what went wrong
 
 
 
-
-
-
-
-
-
-
-
-
-
 ---
 
+# Project Description
+
+Our proposed system, TranslationCorrect, is designed to function as a robust and comprehensive NMT system with iterative improvement. It enables users to generate hypothesis translations, detect potential errors within them, and provide corrections. 
+
+- The system's detailed architecture is composed of three main components:
+
+	**I. Neural Machine Translation:** The system allows users to input source text and generate high-quality hypothesis translations as output.
+
+	**II. Fine-Grained Error Detection:** Fine-grained error detection is performed on hypothesis translations, and a comprehensive analysis of potential translation errors is displayed to the user.
+
+	**III. Error Correction UI:** Users can make detailed edits, including error annotation scoring, annotation insertion, and text modifications (additions and deletions) to the hypothesis translation. Edits are tracked systematically to prioritize organization and clarity for the user. The edits are then collected and submitted to the **Fine-Grained Error Detection** component for iterative improvement in its error detection capabilities.
+
+
+The three proposed components work closely together, creating a seamless experience for obtaining
+accurate MTs. The backend pipeline data flow is illustrated as follows:
+
+![Backend Pipeline Data Flow](https://github.com/MekaelWasti/TranslationCorrect/blob/c2bde9d079bc566ab143238f0bd7692c4400207c/frontend/src/assets/Pipeline%20Flow%20Diagram_readme.svg)
+
+2. A UI that facilitates effective translation correction through features such as error categorization and classification, text extraction, and hovering tooltips).
+
+![User Interface Error Detection and Correction Visualization](https://github.com/MekaelWasti/TranslationCorrect/blob/9cc033a3fc329a60144e234db840ecc039cc4c75/frontend/src/assets/UI_snippets.svg)
 
 
 
-![POC Diagram](https://github.com/MekaelWasti/Error-in-Translations/assets/40731373/af13deda-d751-4ae0-ae01-ec90f71fb754)
 
+# Data Usage & Training Details/Resources
 
-# Phase 1
+- **MQM Error Dataset:**
+	To simulate human user activities, we generated MQM data using OpenAI's o1 model. We designed prompts guiding o1 to self-generate MQM data, focusing on the English-Chinese (en-zh) language pair. The resulting generated data was then evaluated with Unbabel's CometKiwi model, which yielded MQM scores for each data instance. After
+	cleaning the duplicates and invalid outputs, we obtained a total of 2,899 MQM data samples, which we used for evaluation (reported in our paper).
 
-## Input
+- **Error Categories**
+We have categorized potential errors into **six categories:**
+ - Addition Of Text
+ - Negation Errors
+ - Mask In-Fill
+ - Errors In Numbers
+ - Named Entity Errors
+ - Hallucination
 
-- User input is a **source sentence** (e.g. “Hello, how are you?”).
-
-## Model 1 - NMT
-
-- This input is fed into our **Model 1,** which is an **NLLB LLM** model. It conducts translation through it’s inference and outputs the translation in the target language along with a **score** in the form of **spBLEU or chrF++.**
-- The source language is fed to the tokenizer and the target language is fed as a param to the model.generate() call ** (based on the generation segment of documentation [M2M100 (huggingface.co)](https://huggingface.co/docs/transformers/main/en/model_doc/m2m_100#transformers.M2M100ForConditionalGeneration))
-- Output should of course contain the translated sentence (e.g. “Salut, comment ça va”). This and the score then goes into Model 2
-
-## Model 2 - Quality Estimation (QE)
-
-- This model will take the translation sentence as input (input: translation(source, target)) and will output a QE score. This score should be used to evaluate the quality of the translation and likely put against a threshold to determine the next step
-- Methods to try and benchmark to find the best one
-    - Method 1:
-        - HRL Comet QE Model or AfroComet QE models can be used
-    - Method 2:
-        - In context prompting using GPT 4.5 API (from Prof Christopher Collins) or Llama 3
-            - Hokkien LREC
-            - Bohan
-- Can talk to someone named Riddhi for more information and resources on this part
-
-## Data
-
-- **Error Dataset:** Needs literature review to on error datasets to figure out which one to use.
-    - Error Categories
-    - Error Dataset
-    - Which languages?
-    - Seq-Tags
-        - Classify error types
-        - Target Seq: ~-~-~-~-~-~-~
-        - Seq-tags:  [✔] [X] [✔] [✔] [X] [✔] [✔]
-        - 
-            
-            ![Untitled](https://prod-files-secure.s3.us-west-2.amazonaws.com/345c586f-44b7-4a2c-91e0-908f51ec6f63/4eebaaf7-d70f-4ee1-bedd-c7f251e795e1/Untitled.png)
-            
-
-# Interface
-
-- Not concerned with this for now but it will take the user input, communicate it with the translation pipeline, return the translation and dynamically update.
-- It will offer the user functions such as
-    - **Edit context:** allow for context prompting that will guide the style of the translation, few-shot examples are permitted
-    - **Rephrase:** will provide an alternative translation to the source sentence and avoid repeating previous translations
-    - **Accept:** indicate to the system that the translation provided is accurate and can be used to reward the RLHF component of the pipeline
-- If we go this human feedback route we will likely also have **reject/correct errors** so that penalties can be applied to the RLHF system
-
----
-
-# Phase 2
-
-## Reinforcement Learning from Human Feedback (RLHF)
-
-**This is rough understanding and may not be 100% accurate to RL methods** 
-
-![Untitled](https://prod-files-secure.s3.us-west-2.amazonaws.com/345c586f-44b7-4a2c-91e0-908f51ec6f63/59902eae-a338-4131-87a3-db1b5fa4d5b9/Untitled.png)
-
-Environment is the base models of translation and quality estimation
-
-1. Action from the agent is translation
-    1. RL
-    2. RLHF
-    3. PPO
-2. Feedback on the translation from human or QE model decides on whether to reward or penalize the translation model
-3. Correction and feedback outcome are used to train the model
-4. Loop
-
-Env: Model - Translation Error
-
-Agent: Translator (human or data or model)
-
-Action: Translation Pair
-
-Reward Penalty: Error
+The first five categories are major error types identified in Unbabel's xCOMET evaluation results, and hallucination is added to the categories as it is a recurring error over our extensive studies.
