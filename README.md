@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://github.com/MekaelWasti/TranslationCorrect/blob/1f48ec4fc7c08d1d9f2af9a9d893b8cdfc2f3b2e/frontend/src/assets/logo.svg" alt="TranslationCorrect Logo" width="800">
+  <img src="https://github.com/MekaelWasti/TranslationCorrect-V2/blob/1f48ec4fc7c08d1d9f2af9a9d893b8cdfc2f3b2e/frontend/src/assets/logo.svg" alt="TranslationCorrect Logo" width="800">
 </p>
 
 
